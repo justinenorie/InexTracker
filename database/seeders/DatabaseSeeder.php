@@ -6,6 +6,8 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+// TODO:"php artisan make:factory ExpenseFactory --model=Expense"
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -18,6 +20,11 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+        ]);
+
+        $this->call([
+            CategorySeeder::class,
+            TransactionSeeder::class,
         ]);
     }
 }
