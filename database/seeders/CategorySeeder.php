@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class CategorySeeder extends Seeder
@@ -16,52 +16,33 @@ class CategorySeeder extends Seeder
     {
         $user = User::query()->first() ?? User::factory()->create([
             'name' => 'Seeder User',
-            'email' => 'seeder+'.Str::random(8).'@example.com',
+            'email' => 'seeder+' . Str::random(8) . '@example.com',
         ]);
 
-        $now = now();
+        $defaults = [
+            ['Salary', 'income', '#16a34a'],
+            ['Freelance', 'income', '#22c55e'],
+            ['Food', 'expense', '#ef4444'],
+            ['Transport', 'expense', '#f97316'],
+            ['Utilities', 'expense', '#eab308'],
+        ];
 
-        DB::table('categories')->upsert([
-            [
-                'user_id' => $user->id,
-                'name' => 'Salary',
-                'type' => 'income',
-                'color' => '#16a34a',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'user_id' => $user->id,
-                'name' => 'Freelance',
-                'type' => 'income',
-                'color' => '#22c55e',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'user_id' => $user->id,
-                'name' => 'Food',
-                'type' => 'expense',
-                'color' => '#ef4444',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'user_id' => $user->id,
-                'name' => 'Transport',
-                'type' => 'expense',
-                'color' => '#f97316',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'user_id' => $user->id,
-                'name' => 'Utilities',
-                'type' => 'expense',
-                'color' => '#eab308',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-        ], ['user_id', 'name', 'type'], ['color', 'updated_at']);
+        foreach ($defaults as [$name, $type, $color]) {
+            Category::withTrashed()->updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'name' => $name,
+                    'type' => $type,
+                ],
+                [
+                    'color' => $color,
+                ],
+            );
+        }
+
+        Category::onlyTrashed()
+            ->where('user_id', $user->id)
+            ->whereIn('name', array_column($defaults, 0))
+            ->restore();
     }
 }

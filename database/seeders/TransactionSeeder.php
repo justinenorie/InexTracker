@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class TransactionSeeder extends Seeder
 {
@@ -20,7 +21,7 @@ class TransactionSeeder extends Seeder
             return;
         }
 
-        $alreadySeeded = DB::table('transactions')
+        $alreadySeeded = Transaction::query()
             ->where('user_id', $user->id)
             ->exists();
 
@@ -28,13 +29,13 @@ class TransactionSeeder extends Seeder
             return;
         }
 
-        $incomeCategoryIds = DB::table('categories')
+        $incomeCategoryIds = Category::query()
             ->where('user_id', $user->id)
             ->whereIn('type', ['income', 'both'])
             ->pluck('id')
             ->all();
 
-        $expenseCategoryIds = DB::table('categories')
+        $expenseCategoryIds = Category::query()
             ->where('user_id', $user->id)
             ->whereIn('type', ['expense', 'both'])
             ->pluck('id')
@@ -44,35 +45,26 @@ class TransactionSeeder extends Seeder
             return;
         }
 
-        $now = now();
-        $rows = [];
-
         for ($i = 0; $i < 10; $i++) {
-            $rows[] = [
+            Transaction::create([
                 'user_id' => $user->id,
                 'category_id' => $incomeCategoryIds[array_rand($incomeCategoryIds)],
                 'type' => 'income',
                 'amount' => fake()->randomFloat(2, 200, 5000),
                 'description' => fake()->sentence(4),
                 'transacted_at' => Carbon::today()->subDays(fake()->numberBetween(0, 60)),
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
+            ]);
         }
 
         for ($i = 0; $i < 15; $i++) {
-            $rows[] = [
+            Transaction::create([
                 'user_id' => $user->id,
                 'category_id' => $expenseCategoryIds[array_rand($expenseCategoryIds)],
                 'type' => 'expense',
                 'amount' => fake()->randomFloat(2, 5, 800),
                 'description' => fake()->sentence(5),
                 'transacted_at' => Carbon::today()->subDays(fake()->numberBetween(0, 60)),
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
+            ]);
         }
-
-        DB::table('transactions')->insert($rows);
     }
 }
