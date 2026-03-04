@@ -45,11 +45,7 @@ class AppServiceProvider extends ServiceProvider
                 ->numbers()
                 ->symbols()
                 ->uncompromised()
-                : Password::min(8)
-                ->mixedCase()
-                ->letters()
-                ->numbers()
-                ->symbols(),
+                : null
         );
     }
 }

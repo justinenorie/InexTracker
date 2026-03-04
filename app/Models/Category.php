@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +11,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, HasUuids, SoftDeletes;
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
 
     /**
      * @var list<string>
@@ -21,6 +26,17 @@ class Category extends Model
         'type',
         'color',
     ];
+
+    protected static function booted(): void
+    {
+        static::deleted(function (Category $category) {
+            $category->transactions()->delete();
+        });
+
+        static::restored(function (Category $category) {
+            $category->transactions()->withTrashed()->restore();
+        });
+    }
 
     /**
      * @return BelongsTo<User, Category>
