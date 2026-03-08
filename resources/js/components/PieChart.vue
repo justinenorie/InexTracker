@@ -6,6 +6,7 @@ import {
     Card,
     CardContent,
     CardDescription,
+    CardFooter,
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
@@ -40,17 +41,15 @@ const chartData = computed(() => {
         category: row.category_name,
         amount: Math.abs(Number(row.total)),
         color: row.category_color || '#ccc',
+        // Add a dynamic key so ChartTooltipContent finds it in chartConfig
+        [row.category_name]: Math.abs(Number(row.total)),
     }));
 });
 
 type Data = (typeof chartData.value)[number];
 
 const chartConfig = computed(() => {
-    const config: ChartConfig = {
-        amount: {
-            label: 'Amount',
-        },
-    };
+    const config: ChartConfig = {};
 
     filteredData.value.forEach((row) => {
         config[row.category_name] = {
@@ -118,12 +117,17 @@ const chartConfig = computed(() => {
                             [Donut.selectors.segment]: componentToString(
                                 chartConfig,
                                 ChartTooltipContent,
-                                { hideLabel: true, nameKey: 'category' },
+                                { hideLabel: true },
                             )!,
                         }"
                     />
                 </VisSingleContainer>
             </ChartContainer>
         </CardContent>
+        <CardFooter class="pt-0">
+            <div class="text-xs text-center w-full text-muted-foreground">
+                Showing the distribution of your <strong>{{ activeType }}s</strong> across different categories for the selected period.
+            </div>
+        </CardFooter>
     </Card>
 </template>

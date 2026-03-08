@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { Head, usePage } from '@inertiajs/vue3';
+import { TrendingDown, TrendingUp, Wallet } from 'lucide-vue-next';
 import { computed } from 'vue';
 import Chart from '@/components/Chart.vue';
 import DateRangeBar from '@/components/DateRangeBar.vue';
 import Heading from '@/components/Heading.vue';
 import PieChart from '@/components/PieChart.vue';
 import StatCard from '@/components/StatCard.vue';
+import { useCurrency } from '@/composables/useCurrency';
 import AppLayout from '@/layouts/AppLayout.vue';
 import CreateTransaction from '@/pages/transactions/CreateTransaction.vue';
 import { dashboard } from '@/routes';
@@ -51,6 +53,7 @@ const props = defineProps<Props>();
 
 const page = usePage();
 const user = computed(() => page.props.auth.user as any);
+const { formatMoney } = useCurrency();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -59,27 +62,22 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const formatMoney = (value: string | number) => {
-    const n = typeof value === 'number' ? value : Number(value);
-    if (Number.isNaN(n)) return String(value);
-    return new Intl.NumberFormat(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    }).format(n);
-};
+const firstName = computed(() => {
+    return user.value.name ? user.value.name.split(' ')[0] : 'User';
+});
 </script>
 
 <template>
     <Head title="Dashboard" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="space-y-6 overflow-x-auto p-6">
+        <div class="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-6">
             <div
-                class="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center"
+                class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center"
             >
                 <Heading
-                    title="Dashboard"
-                    description="Track totals and category breakdown. Use the date range to focus your reporting."
+                    :title="`Welcome back, ${firstName}!`"
+                    description="Here's an overview of your finances. Use the date range to focus your reporting."
                 />
                 <CreateTransaction
                     :categories="props.categories"
@@ -95,24 +93,27 @@ const formatMoney = (value: string | number) => {
                 "
             />
 
-            <div class="grid gap-4 md:grid-cols-3">
+            <div class="grid gap-6 md:grid-cols-3">
                 <StatCard
                     label="Current Balance"
                     :value="formatMoney(user.balance)"
+                    :icon="Wallet"
                 />
                 <StatCard
                     label="Total Income"
                     :value="formatMoney(props.totals.total_income)"
                     variant="success"
+                    :icon="TrendingUp"
                 />
                 <StatCard
                     label="Total Expenses"
                     :value="formatMoney(props.totals.total_expense)"
                     variant="destructive"
+                    :icon="TrendingDown"
                 />
             </div>
 
-            <div class="grid grid-cols-1 gap-4 lg:grid-cols-5">
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-5">
                 <Chart class="lg:col-span-3" :data="props.history" />
                 <PieChart
                     class="lg:col-span-2"
