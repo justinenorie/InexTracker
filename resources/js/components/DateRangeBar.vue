@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
+import DatePicker from '@/components/DatePicker.vue';
 import Button from '@/components/ui/button/Button.vue';
-import Input from '@/components/ui/input/Input.vue';
 
 type Props = {
     title?: string;
@@ -63,13 +63,13 @@ const clear = () => {
                 <label class="mb-1 block text-xs text-muted-foreground"
                     >From</label
                 >
-                <Input v-model="fromValue" type="date" />
+                <DatePicker v-model="fromValue" placeholder="Select start date" />
             </div>
             <div class="flex-1">
                 <label class="mb-1 block text-xs text-muted-foreground"
                     >To</label
                 >
-                <Input v-model="toValue" type="date" />
+                <DatePicker v-model="toValue" placeholder="Select end date" />
             </div>
             <div class="flex gap-2">
                 <Button type="button" @click="apply">Apply</Button>
