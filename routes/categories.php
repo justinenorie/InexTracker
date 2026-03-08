@@ -8,4 +8,6 @@ Route::controller(CategoryController::class)->prefix('categories')->name('catego
     Route::post('/', 'store')->name('store');
     Route::put('/{category}', 'update')->whereUuid('category')->name('update')->scopeBindings();
     Route::delete('/{category}', 'destroy')->whereUuid('category')->name('destroy')->scopeBindings();
+    Route::post('/{id}/restore', 'restore')->whereUuid('id')->name('restore');
+    Route::delete('/{id}/force-delete', 'forceDelete')->whereUuid('id')->name('force-delete');
 });

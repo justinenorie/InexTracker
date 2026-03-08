@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\Auth;
 
 class CategoryService
 {
+    protected $softDeletes;
+
+    public function __construct(SoftDeleteService $softDeletes)
+    {
+        $this->softDeletes = $softDeletes;
+    }
+
     /**
      * Get all categories for a user.
      */
@@ -45,5 +52,29 @@ class CategoryService
     public function deleteCategory(Category $category): ?bool
     {
         return $category->delete();
+    }
+
+    /**
+     * Get trashed categories for a user.
+     */
+    public function getTrashedCategoriesForUser(User $user): Collection
+    {
+        return $this->softDeletes->listTrashedForUser(Category::class, $user);
+    }
+
+    /**
+     * Restore a trashed category.
+     */
+    public function restoreCategory(string $id, User $user): bool
+    {
+        return $this->softDeletes->restoreForUser(Category::class, $id, $user);
+    }
+
+    /**
+     * Permanently delete a category.
+     */
+    public function forceDeleteCategory(string $id, User $user): bool
+    {
+        return $this->softDeletes->forceDeleteForUser(Category::class, $id, $user);
     }
 }

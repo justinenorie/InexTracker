@@ -29,7 +29,12 @@ class Category extends Model
 
     protected static function booted(): void
     {
-        static::deleted(function (Category $category) {
+        static::deleting(function (Category $category) {
+            if ($category->isForceDeleting()) {
+                $category->transactions()->withTrashed()->forceDelete();
+                return;
+            }
+
             $category->transactions()->delete();
         });
 

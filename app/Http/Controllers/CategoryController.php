@@ -48,4 +48,16 @@ class CategoryController extends Controller
         $this->service->deleteCategory($category);
         return back();
     }
+
+    public function restore(Request $request, string $id): RedirectResponse
+    {
+        $this->service->restoreCategory($id, $request->user());
+        return back()->with('success', 'Category restored successfully!');
+    }
+
+    public function forceDelete(Request $request, string $id): RedirectResponse
+    {
+        $this->service->forceDeleteCategory($id, $request->user());
+        return back()->with('success', 'Category permanently deleted.');
+    }
 }

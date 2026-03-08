@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Transaction\StoreTransactionRequest;
 use App\Http\Requests\Transaction\UpdateTransactionRequest;
+use App\Services\CategoryService;
 use App\Models\Transaction;
 use App\Services\TransactionService;
 use Illuminate\Http\RedirectResponse;
@@ -13,11 +14,12 @@ use Inertia\Response;
 
 class TransactionController extends Controller
 {
-    protected $service;
+    protected $service, $categoryService;
 
-    public function __construct(TransactionService $service)
+    public function __construct(TransactionService $service, CategoryService $categoryService)
     {
         $this->service = $service;
+        $this->categoryService = $categoryService;
     }
 
     public function index(Request $request): Response
@@ -39,6 +41,16 @@ class TransactionController extends Controller
         ]);
     }
 
+    public function trash(Request $request): Response
+    {
+        $user = $request->user();
+
+        return Inertia::render('Trash/Index', [
+            'transactions' => $this->service->listTrashedTransactions($user),
+            'categories' => $this->categoryService->getTrashedCategoriesForUser($user),
+        ]);
+    }
+
     public function store(StoreTransactionRequest $request): RedirectResponse
     {
         $this->service->createTransaction($request->validated());
@@ -55,5 +67,17 @@ class TransactionController extends Controller
     {
         $this->service->deleteTransaction($transaction);
         return back();
+    }
+
+    public function restore(Request $request, string $id): RedirectResponse
+    {
+        $this->service->restoreTransaction($id, $request->user());
+        return back()->with('success', 'Transaction restored successfully!');
+    }
+
+    public function forceDelete(Request $request, string $id): RedirectResponse
+    {
+        $this->service->forceDeleteTransaction($id, $request->user());
+        return back()->with('success', 'Transaction permanently deleted.');
     }
 }

@@ -11,11 +11,12 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionService
 {
-    protected $queryService;
+    protected $queryService, $softDeletes;
 
-    public function __construct(DashboardMetricsService $queryService)
+    public function __construct(DashboardMetricsService $queryService, SoftDeleteService $softDeletes)
     {
         $this->queryService = $queryService;
+        $this->softDeletes = $softDeletes;
     }
 
     /**
@@ -83,5 +84,33 @@ class TransactionService
     public function deleteTransaction(Transaction $transaction): ?bool
     {
         return $transaction->delete();
+    }
+
+    /**
+     * Get trashed transactions for a user.
+     */
+    public function listTrashedTransactions(User $user): Collection
+    {
+        return $this->softDeletes->listTrashedForUser(
+            Transaction::class,
+            $user,
+            with: ['category'],
+        );
+    }
+
+    /**
+     * Restore a trashed transaction.
+     */
+    public function restoreTransaction(string $id, User $user): bool
+    {
+        return $this->softDeletes->restoreForUser(Transaction::class, $id, $user);
+    }
+
+    /**
+     * Permanently delete a transaction.
+     */
+    public function forceDeleteTransaction(string $id, User $user): bool
+    {
+        return $this->softDeletes->forceDeleteForUser(Transaction::class, $id, $user);
     }
 }
