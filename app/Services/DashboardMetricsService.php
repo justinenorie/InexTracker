@@ -84,10 +84,10 @@ class DashboardMetricsService
     }
 
     /**
-     * Dashboard totals (income, expense, revenue) scoped to a user.
+     * Dashboard totals (income, expense) scoped to a user.
      *
      * @param  array<string, mixed>  $filters
-     * @return array{total_income: string, total_expense: string, revenue: string}
+     * @return array{total_income: string, total_expense: string}
      */
     public function totals(User $user, array $filters = []): array
     {
@@ -105,7 +105,6 @@ class DashboardMetricsService
         return [
             'total_income' => $totalIncome,
             'total_expense' => $totalExpense,
-            'revenue' => $this->decimalAdd($totalIncome, $totalExpenseRaw),
         ];
     }
 
@@ -124,11 +123,12 @@ class DashboardMetricsService
 
         return (clone $base)
             ->join('categories as c', 'c.id', '=', 'transactions.category_id')
-            ->groupBy('transactions.category_id', 'c.name', 'transactions.type')
+            ->groupBy('transactions.category_id', 'c.name', 'c.color', 'transactions.type')
             ->orderByDesc(DB::raw('SUM(transactions.amount)'))
             ->get([
                 'transactions.category_id as category_id',
                 'c.name as category_name',
+                'c.color as category_color',
                 'transactions.type as type',
                 DB::raw('COALESCE(SUM(transactions.amount), 0) as total'),
             ])
@@ -136,6 +136,7 @@ class DashboardMetricsService
                 return [
                     'category_id' => (string) $row->category_id,
                     'category_name' => (string) $row->category_name,
+                    'category_color' => (string) $row->category_color,
                     'type' => (string) $row->type,
                     'total' => (string) $row->total,
                 ];
@@ -146,6 +147,78 @@ class DashboardMetricsService
     /**
      * @param  Builder<\App\Models\Transaction>  $query
      */
+    /**
+     * Get historical totals (income vs expense) grouped by period (day or month).
+     *
+     * @param  array<string, mixed>  $filters
+     * @return array<int, array{period: string, label: string, income: float, expense: float}>
+     */
+    public function getHistory(User $user, array $filters = []): array
+    {
+        $query = $this->queryForUser($user);
+        $this->applyFilters($query, $filters);
+
+        $from = $this->parseDate($filters['from'] ?? null);
+        $to = $this->parseDate($filters['to'] ?? null);
+
+        if (! $from || ! $to) {
+            $to = Carbon::today();
+            $from = Carbon::today()->subMonths(5)->startOfMonth();
+
+            $query->whereBetween('transactions.transacted_at', [$from->toDateString(), $to->toDateString()]);
+        }
+
+        $daysDiff = $from->diffInDays($to);
+        $groupByDay = $daysDiff <= 60;
+
+        $dateFormat = $groupByDay ? '%Y-%m-%d' : '%Y-%m';
+
+        $results = $query
+            ->select([
+                DB::raw("DATE_FORMAT(transacted_at, '{$dateFormat}') as period"),
+                'type',
+                DB::raw('SUM(amount) as total'),
+            ])
+            ->groupBy('period', 'type')
+            ->orderBy('period')
+            ->get();
+
+        $data = [];
+
+        $current = clone $from;
+        while ($current <= $to) {
+            $period = $current->format($groupByDay ? 'Y-m-d' : 'Y-m');
+            $data[$period] = [
+                'period' => $period,
+                'label' => $current->format($groupByDay ? 'M d' : 'M Y'),
+                'income' => 0.0,
+                'expense' => 0.0,
+            ];
+
+            if ($groupByDay) {
+                $current->addDay();
+            } else {
+                $current->addMonth();
+            }
+        }
+
+        foreach ($results as $row) {
+            $period = (string) $row->period;
+
+            if (! isset($data[$period])) {
+                continue;
+            }
+
+            if ($row->type === 'income') {
+                $data[$period]['income'] = (float) $row->total;
+            } else {
+                $data[$period]['expense'] = abs((float) $row->total);
+            }
+        }
+
+        return array_values($data);
+    }
+
     private function sumAmount(Builder $query): string
     {
         $value = (clone $query)
@@ -153,15 +226,6 @@ class DashboardMetricsService
             ->value('total');
 
         return (string) $value;
-    }
-
-    private function decimalAdd(string $a, string $b): string
-    {
-        if (function_exists('bcadd')) {
-            return bcadd($a, $b, 2);
-        }
-
-        return number_format(((float) $a) + ((float) $b), 2, '.', '');
     }
 
     private function parseDate(mixed $value): ?Carbon
