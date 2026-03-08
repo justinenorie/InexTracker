@@ -57,9 +57,14 @@ class TransactionService
             $data['amount'] = abs($data['amount']);
         }
 
-        $data['user_id'] = Auth::id();
+        $user = Auth::user();
+        $data['user_id'] = $user->id;
 
-        return Transaction::create($data);
+        $transaction = Transaction::create($data);
+
+        $user->increment('balance', (float)$transaction->amount);
+
+        return $transaction;
     }
 
     /**
@@ -67,6 +72,8 @@ class TransactionService
      */
     public function updateTransaction(Transaction $transaction, array $data): bool
     {
+        $oldAmount = $transaction->amount;
+
         if (isset($data['type']) && isset($data['amount'])) {
             if ($data['type'] === 'expense' && $data['amount'] > 0) {
                 $data['amount'] = $data['amount'] * -1;
@@ -75,7 +82,16 @@ class TransactionService
             }
         }
 
-        return $transaction->update($data);
+        $updated = $transaction->update($data);
+
+        if ($updated) {
+            $diff = $transaction->amount - $oldAmount;
+            if ($diff != 0) {
+                $transaction->user->increment('balance', $diff);
+            }
+        }
+
+        return $updated;
     }
 
     /**
@@ -83,7 +99,16 @@ class TransactionService
      */
     public function deleteTransaction(Transaction $transaction): ?bool
     {
-        return $transaction->delete();
+        $amount = $transaction->amount;
+        $user = $transaction->user;
+
+        $deleted = $transaction->delete();
+
+        if ($deleted) {
+            $user->decrement('balance', (float)$amount);
+        }
+
+        return $deleted;
     }
 
     /**
@@ -103,7 +128,16 @@ class TransactionService
      */
     public function restoreTransaction(string $id, User $user): bool
     {
-        return $this->softDeletes->restoreForUser(Transaction::class, $id, $user);
+        $restored = $this->softDeletes->restoreForUser(Transaction::class, $id, $user);
+
+        if ($restored) {
+            $transaction = Transaction::find($id);
+            if ($transaction) {
+                $user->increment('balance', $transaction->amount);
+            }
+        }
+
+        return $restored;
     }
 
     /**
@@ -112,5 +146,19 @@ class TransactionService
     public function forceDeleteTransaction(string $id, User $user): bool
     {
         return $this->softDeletes->forceDeleteForUser(Transaction::class, $id, $user);
+    }
+
+    /**
+     * Recalculate the user's balance based on initial_balance and all transactions.
+     */
+    public function recalculateBalance(User $user): void
+    {
+        $transactionsSum = Transaction::query()
+            ->where('user_id', $user->id)
+            ->sum('amount');
+
+        $user->update([
+            'balance' => $user->initial_balance + $transactionsSum
+        ]);
     }
 }

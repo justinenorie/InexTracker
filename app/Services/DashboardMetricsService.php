@@ -97,12 +97,15 @@ class DashboardMetricsService
         );
 
         $totalIncome = $this->sumAmount((clone $base)->where('type', 'income'));
-        $totalExpense = $this->sumAmount((clone $base)->where('type', 'expense'));
+        $totalExpenseRaw = $this->sumAmount((clone $base)->where('type', 'expense'));
+
+        // Show expenses as positive on the dashboard
+        $totalExpense = (string) abs((float) $totalExpenseRaw);
 
         return [
             'total_income' => $totalIncome,
             'total_expense' => $totalExpense,
-            'revenue' => $this->decimalSub($totalIncome, $totalExpense),
+            'revenue' => $this->decimalAdd($totalIncome, $totalExpenseRaw),
         ];
     }
 
@@ -152,13 +155,13 @@ class DashboardMetricsService
         return (string) $value;
     }
 
-    private function decimalSub(string $a, string $b): string
+    private function decimalAdd(string $a, string $b): string
     {
-        if (function_exists('bcsub')) {
-            return bcsub($a, $b, 2);
+        if (function_exists('bcadd')) {
+            return bcadd($a, $b, 2);
         }
 
-        return number_format(((float) $a) - ((float) $b), 2, '.', '');
+        return number_format(((float) $a) + ((float) $b), 2, '.', '');
     }
 
     private function parseDate(mixed $value): ?Carbon

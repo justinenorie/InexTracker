@@ -27,6 +27,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'initial_balance',
+        'balance',
     ];
 
     /**
@@ -52,6 +54,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'initial_balance' => 'decimal:2',
+            'balance' => 'decimal:2',
         ];
     }
 }

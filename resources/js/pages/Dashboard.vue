@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import DateRangeBar from '@/components/DateRangeBar.vue';
 import Heading from '@/components/Heading.vue';
 import StatCard from '@/components/StatCard.vue';
@@ -30,6 +31,9 @@ type Props = {
 };
 
 const props = defineProps<Props>();
+
+const page = usePage();
+const user = computed(() => page.props.auth.user as any);
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -66,7 +70,11 @@ const formatMoney = (value: string | number) => {
                 "
             />
 
-            <div class="grid gap-4 md:grid-cols-3">
+            <div class="grid gap-4 md:grid-cols-4">
+                <StatCard
+                    label="Current Balance"
+                    :value="formatMoney(user.balance)"
+                />
                 <StatCard
                     label="Total Income"
                     :value="formatMoney(props.totals.total_income)"

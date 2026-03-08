@@ -5,11 +5,19 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Services\TransactionService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 
 class TransactionSeeder extends Seeder
 {
+    protected $transactionService;
+
+    public function __construct(TransactionService $transactionService)
+    {
+        $this->transactionService = $transactionService;
+    }
+
     /**
      * Run the database seeds.
      */
@@ -61,10 +69,12 @@ class TransactionSeeder extends Seeder
                 'user_id' => $user->id,
                 'category_id' => $expenseCategoryIds[array_rand($expenseCategoryIds)],
                 'type' => 'expense',
-                'amount' => fake()->randomFloat(2, 5, 800),
+                'amount' => fake()->randomFloat(2, 5, 800) * -1,
                 'description' => fake()->sentence(5),
                 'transacted_at' => Carbon::today()->subDays(fake()->numberBetween(0, 60)),
             ]);
         }
+
+        $this->transactionService->recalculateBalance($user);
     }
 }

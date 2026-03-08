@@ -7,6 +7,7 @@ export type User = {
     created_at: string;
     updated_at: string;
     [key: string]: unknown;
+    initial_balance: string | number | undefined;
 };
 
 export type Auth = {

@@ -9,11 +9,12 @@ use Illuminate\Support\Facades\Auth;
 
 class CategoryService
 {
-    protected $softDeletes;
+    protected $softDeletes, $transactionService;
 
-    public function __construct(SoftDeleteService $softDeletes)
+    public function __construct(SoftDeleteService $softDeletes, TransactionService $transactionService)
     {
         $this->softDeletes = $softDeletes;
+        $this->transactionService = $transactionService;
     }
 
     /**
@@ -51,7 +52,14 @@ class CategoryService
      */
     public function deleteCategory(Category $category): ?bool
     {
-        return $category->delete();
+        $user = $category->user;
+        $deleted = $category->delete();
+
+        if ($deleted) {
+            $this->transactionService->recalculateBalance($user);
+        }
+
+        return $deleted;
     }
 
     /**
@@ -67,7 +75,13 @@ class CategoryService
      */
     public function restoreCategory(string $id, User $user): bool
     {
-        return $this->softDeletes->restoreForUser(Category::class, $id, $user);
+        $restored = $this->softDeletes->restoreForUser(Category::class, $id, $user);
+
+        if ($restored) {
+            $this->transactionService->recalculateBalance($user);
+        }
+
+        return $restored;
     }
 
     /**
