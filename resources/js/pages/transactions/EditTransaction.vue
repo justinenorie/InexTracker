@@ -2,6 +2,7 @@
 import { Form } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import TransactionController from '@/actions/App/Http/Controllers/TransactionController';
+import DatePicker from '@/components/DatePicker.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,6 +17,13 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 
 type Category = {
     id: string;
@@ -50,7 +58,9 @@ const categoryIdValue = ref<string>(
         props.transaction.category_id ?? props.transaction.category?.id ?? '',
     ),
 );
-const amountValue = ref<string>(props.transaction.amount ?? '');
+const amountValue = ref<string>(
+    props.transaction.amount ? String(Math.abs(Number(props.transaction.amount))) : '',
+);
 const transactedAtValue = ref<string>(props.transaction.transacted_at ?? '');
 const descriptionValue = ref<string>(props.transaction.description ?? '');
 
@@ -59,7 +69,7 @@ watch(
     (t) => {
         typeValue.value = (t.type as any) === 'income' ? 'income' : 'expense';
         categoryIdValue.value = String(t.category_id ?? t.category?.id ?? '');
-        amountValue.value = t.amount ?? '';
+        amountValue.value = t.amount ? String(Math.abs(Number(t.amount))) : '';
         transactedAtValue.value = t.transacted_at ?? '';
         descriptionValue.value = t.description ?? '';
     },
@@ -96,37 +106,34 @@ const onSuccess = () => {
             >
                 <div class="grid gap-2">
                     <Label>Type</Label>
-                    <select
-                        v-model="typeValue"
-                        name="type"
-                        class="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                        :disabled="processing"
-                        required
-                    >
-                        <option value="income">Income</option>
-                        <option value="expense">Expense</option>
-                    </select>
+                    <Select v-model="typeValue" name="type" :disabled="processing">
+                        <SelectTrigger class="w-full">
+                            <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="income">Income</SelectItem>
+                            <SelectItem value="expense">Expense</SelectItem>
+                        </SelectContent>
+                    </Select>
                     <InputError :message="errors.type" />
                 </div>
 
                 <div class="grid gap-2">
                     <Label>Category</Label>
-                    <select
-                        v-model="categoryIdValue"
-                        name="category_id"
-                        class="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                        :disabled="processing"
-                        required
-                    >
-                        <option value="" disabled>Select a category</option>
-                        <option
-                            v-for="c in categories"
-                            :key="c.id"
-                            :value="String(c.id)"
-                        >
-                            {{ c.name }}
-                        </option>
-                    </select>
+                    <Select v-model="categoryIdValue" name="category_id" :disabled="processing">
+                        <SelectTrigger class="w-full">
+                            <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem
+                                v-for="c in categories"
+                                :key="c.id"
+                                :value="String(c.id)"
+                            >
+                                {{ c.name }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
                     <InputError :message="errors.category_id" />
                 </div>
 
@@ -147,13 +154,10 @@ const onSuccess = () => {
 
                     <div class="grid gap-2">
                         <Label htmlFor="transacted_at">Date</Label>
-                        <Input
-                            id="transacted_at"
+                        <DatePicker
                             v-model="transactedAtValue"
                             name="transacted_at"
-                            type="date"
                             :disabled="processing"
-                            required
                         />
                         <InputError :message="errors.transacted_at" />
                     </div>

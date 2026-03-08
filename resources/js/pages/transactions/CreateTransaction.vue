@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
+import { Plus } from 'lucide-vue-next';
 import { ref } from 'vue';
 import TransactionController from '@/actions/App/Http/Controllers/TransactionController';
+import DatePicker from '@/components/DatePicker.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,6 +18,17 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+
+defineOptions({
+    inheritAttrs: false,
+});
 
 type Category = {
     id: string;
@@ -54,7 +67,9 @@ const onSuccess = () => {
 <template>
     <Dialog v-model:open="isOpen">
         <DialogTrigger as-child>
-            <Button type="button">Add Transaction</Button>
+            <Button type="button" v-bind="$attrs">
+                <Plus /> Add Transaction</Button
+            >
         </DialogTrigger>
 
         <DialogContent class="sm:max-w-[560px]">
@@ -75,37 +90,42 @@ const onSuccess = () => {
             >
                 <div class="grid gap-2">
                     <Label>Type</Label>
-                    <select
+                    <Select
                         v-model="typeValue"
                         name="type"
-                        class="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                         :disabled="processing"
-                        required
                     >
-                        <option value="income">Income</option>
-                        <option value="expense">Expense</option>
-                    </select>
+                        <SelectTrigger class="w-full">
+                            <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="income">Income</SelectItem>
+                            <SelectItem value="expense">Expense</SelectItem>
+                        </SelectContent>
+                    </Select>
                     <InputError :message="errors.type" />
                 </div>
 
                 <div class="grid gap-2">
                     <Label>Category</Label>
-                    <select
+                    <Select
                         v-model="categoryIdValue"
                         name="category_id"
-                        class="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                         :disabled="processing"
-                        required
                     >
-                        <option value="" disabled>Select a category</option>
-                        <option
-                            v-for="c in categories"
-                            :key="c.id"
-                            :value="String(c.id)"
-                        >
-                            {{ c.name }}
-                        </option>
-                    </select>
+                        <SelectTrigger class="w-full">
+                            <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem
+                                v-for="c in categories"
+                                :key="c.id"
+                                :value="String(c.id)"
+                            >
+                                {{ c.name }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
                     <InputError :message="errors.category_id" />
                 </div>
 
@@ -126,13 +146,10 @@ const onSuccess = () => {
 
                     <div class="grid gap-2">
                         <Label htmlFor="transacted_at">Date</Label>
-                        <Input
-                            id="transacted_at"
+                        <DatePicker
                             v-model="transactedAtValue"
                             name="transacted_at"
-                            type="date"
                             :disabled="processing"
-                            required
                         />
                         <InputError :message="errors.transacted_at" />
                     </div>

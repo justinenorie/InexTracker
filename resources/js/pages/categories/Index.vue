@@ -29,7 +29,7 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Categories', href: index() }];
     <Head title="Categories" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex h-full flex-1 flex-col gap-6 p-4">
+        <div class="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-6">
             <Heading
                 title="Categories"
                 description="Manage categories used to group your income and expenses."
@@ -77,7 +77,13 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Categories', href: index() }];
                                 </td>
                                 <td class="px-2 py-2">
                                     <Badge
-                                        variant="secondary"
+                                        :variant="
+                                            c.type === 'income'
+                                                ? 'success'
+                                                : c.type === 'expense'
+                                                  ? 'destructive'
+                                                  : 'warning'
+                                        "
                                         class="capitalize"
                                     >
                                         {{ c.type }}

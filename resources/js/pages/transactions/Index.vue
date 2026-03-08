@@ -6,6 +6,14 @@ import Pagination from '@/components/Pagination.vue';
 import Badge from '@/components/ui/badge/Badge.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { useCurrency } from '@/composables/useCurrency';
 import AppLayout from '@/layouts/AppLayout.vue';
 import CreateTransaction from '@/pages/transactions/CreateTransaction.vue';
 import DeleteTransaction from '@/pages/transactions/DeleteTransaction.vue';
@@ -54,26 +62,23 @@ type Props = {
 };
 
 const props = defineProps<Props>();
+const { formatMoney } = useCurrency();
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Transactions', href: index() },
 ];
 
-const typeValue = ref<string>(props.filters.type ?? '');
+const typeValue = ref<string>(props.filters.type ?? 'all');
 const categoryValue = ref<string>(
-    props.filters.category_id ? String(props.filters.category_id) : '',
+    props.filters.category_id ? String(props.filters.category_id) : 'all',
 );
-const fromValue = ref<string>(props.filters.from ?? '');
-const toValue = ref<string>(props.filters.to ?? '');
 const searchValue = ref<string>(props.filters.search ?? '');
 
 watch(
     () => props.filters,
     (f) => {
-        typeValue.value = f.type ?? '';
-        categoryValue.value = f.category_id ? String(f.category_id) : '';
-        fromValue.value = f.from ?? '';
-        toValue.value = f.to ?? '';
+        typeValue.value = f.type ?? 'all';
+        categoryValue.value = f.category_id ? String(f.category_id) : 'all';
         searchValue.value = f.search ?? '';
     },
 );
@@ -82,10 +87,8 @@ const apply = () => {
     router.get(
         index.url({
             query: {
-                type: typeValue.value || undefined,
-                category_id: categoryValue.value || undefined,
-                from: fromValue.value || undefined,
-                to: toValue.value || undefined,
+                type: typeValue.value !== 'all' ? typeValue.value : undefined,
+                category_id: categoryValue.value !== 'all' ? categoryValue.value : undefined,
                 search: searchValue.value || undefined,
             },
         }),
@@ -95,21 +98,17 @@ const apply = () => {
 };
 
 const clear = () => {
-    typeValue.value = '';
-    categoryValue.value = '';
-    fromValue.value = '';
-    toValue.value = '';
+    typeValue.value = 'all';
+    categoryValue.value = 'all';
     searchValue.value = '';
     apply();
 };
 
-const formatMoney = (value: string) => {
-    const n = Number(value);
-    if (Number.isNaN(n)) return value;
-    return new Intl.NumberFormat(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    }).format(n);
+const formatDate = (date: string) => {
+    return new Intl.DateTimeFormat(undefined, {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+    }).format(new Date(date));
 };
 </script>
 
@@ -117,14 +116,14 @@ const formatMoney = (value: string) => {
     <Head title="Transactions" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex h-full flex-1 flex-col gap-6 p-4">
+        <div class="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-6">
             <Heading
                 title="Transactions"
                 description="Browse and filter your income and expenses."
             />
 
             <div class="rounded-xl border bg-card p-4">
-                <div class="grid gap-3 md:grid-cols-5">
+                <div class="grid gap-3 md:grid-cols-4">
                     <div class="md:col-span-2">
                         <label class="mb-1 block text-xs text-muted-foreground"
                             >Search</label
@@ -140,50 +139,37 @@ const formatMoney = (value: string) => {
                         <label class="mb-1 block text-xs text-muted-foreground"
                             >Type</label
                         >
-                        <select
-                            v-model="typeValue"
-                            class="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                        >
-                            <option value="">All</option>
-                            <option value="income">Income</option>
-                            <option value="expense">Expense</option>
-                        </select>
+                        <Select v-model="typeValue">
+                            <SelectTrigger class="w-full">
+                                <SelectValue placeholder="All" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All</SelectItem>
+                                <SelectItem value="income">Income</SelectItem>
+                                <SelectItem value="expense">Expense</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
 
                     <div>
                         <label class="mb-1 block text-xs text-muted-foreground"
                             >Category</label
                         >
-                        <select
-                            v-model="categoryValue"
-                            class="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                        >
-                            <option value="">All</option>
-                            <option
-                                v-for="c in props.categories"
-                                :key="c.id"
-                                :value="String(c.id)"
-                            >
-                                {{ c.name }}
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label
-                                class="mb-1 block text-xs text-muted-foreground"
-                                >From</label
-                            >
-                            <Input v-model="fromValue" type="date" />
-                        </div>
-                        <div>
-                            <label
-                                class="mb-1 block text-xs text-muted-foreground"
-                                >To</label
-                            >
-                            <Input v-model="toValue" type="date" />
-                        </div>
+                        <Select v-model="categoryValue">
+                            <SelectTrigger class="w-full">
+                                <SelectValue placeholder="All" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All</SelectItem>
+                                <SelectItem
+                                    v-for="c in props.categories"
+                                    :key="c.id"
+                                    :value="String(c.id)"
+                                >
+                                    {{ c.name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
 
@@ -244,14 +230,14 @@ const formatMoney = (value: string) => {
                                 class="hover:bg-muted/50"
                             >
                                 <td class="px-2 py-2 whitespace-nowrap">
-                                    {{ t.transacted_at }}
+                                    {{ formatDate(t.transacted_at) }}
                                 </td>
                                 <td class="px-2 py-2">
                                     <Badge
                                         :variant="
                                             t.type === 'income'
-                                                ? 'default'
-                                                : 'secondary'
+                                                ? 'success'
+                                                : 'destructive'
                                         "
                                         class="capitalize"
                                     >
@@ -261,7 +247,14 @@ const formatMoney = (value: string) => {
                                 <td class="px-2 py-2">
                                     {{ t.category?.name ?? '—' }}
                                 </td>
-                                <td class="px-2 py-2 text-right tabular-nums">
+                                <td
+                                    class="px-2 py-2 text-right font-medium tabular-nums"
+                                    :class="{
+                                        'text-success': t.type === 'income',
+                                        'text-destructive':
+                                            t.type === 'expense',
+                                    }"
+                                >
                                     {{ formatMoney(t.amount) }}
                                 </td>
                                 <td class="px-2 py-2">

@@ -16,6 +16,13 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 
 type Category = {
     id: string;
@@ -101,17 +108,16 @@ const onSuccess = () => {
 
                 <div class="grid gap-2">
                     <Label>Type</Label>
-                    <select
-                        v-model="typeValue"
-                        name="type"
-                        class="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                        :disabled="processing"
-                        required
-                    >
-                        <option value="both">Both</option>
-                        <option value="income">Income</option>
-                        <option value="expense">Expense</option>
-                    </select>
+                    <Select v-model="typeValue" name="type" :disabled="processing">
+                        <SelectTrigger class="w-full">
+                            <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="both">Both</SelectItem>
+                            <SelectItem value="income">Income</SelectItem>
+                            <SelectItem value="expense">Expense</SelectItem>
+                        </SelectContent>
+                    </Select>
                     <InputError :message="errors.type" />
                 </div>
 
