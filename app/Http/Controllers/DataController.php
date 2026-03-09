@@ -59,7 +59,7 @@ class DataController extends Controller
                         $t->transacted_at,
                         ucfirst($t->type),
                         $t->category?->name ?? 'N/A',
-                        $t->amount,
+                        abs((float) $t->amount),
                         $t->description ?? '',
                     ], ',', '"', '');
                 }
