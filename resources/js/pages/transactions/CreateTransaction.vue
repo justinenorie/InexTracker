@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useToast } from '@/composables/useToast'
 import type { Category } from '@/types'
 
 defineOptions({
@@ -37,6 +38,7 @@ type Props = {
 
 defineProps<Props>()
 
+const { success } = useToast()
 const isOpen = ref(false)
 
 const typeValue = ref<'income' | 'expense'>('expense')
@@ -55,6 +57,7 @@ const reset = () => {
 
 const onSuccess = () => {
   isOpen.value = false
+  success('Transaction created successfully')
   reset()
 }
 </script>

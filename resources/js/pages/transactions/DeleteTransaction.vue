@@ -13,17 +13,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { useToast } from '@/composables/useToast'
 import type { Transaction } from '@/types'
 
 type Props = {
   transaction: Transaction
 }
+const { success } = useToast()
 const props = defineProps<Props>()
 
 const isOpen = ref(false)
 
 const onSuccess = () => {
   isOpen.value = false
+  success('Transaction deleted successfully')
 }
 </script>
 

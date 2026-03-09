@@ -13,11 +13,11 @@
         "types:check": "vue-tsc --noEmit"
     },
     "devDependencies": {
-        "@unovis/ts": "^1.6.4",
         "@eslint/js": "^9.19.0",
         "@laravel/vite-plugin-wayfinder": "^0.1.3",
         "@tailwindcss/vite": "^4.1.11",
         "@types/node": "^22.13.5",
+        "@unovis/ts": "^1.6.4",
         "@vitejs/plugin-vue": "^6.0.0",
         "@vue/eslint-config-typescript": "^14.3.0",
         "concurrently": "^9.0.1",
@@ -47,7 +47,8 @@
         "tailwindcss": "^4.1.1",
         "tw-animate-css": "^1.2.5",
         "vue": "^3.5.13",
-        "vue-input-otp": "^0.3.2"
+        "vue-input-otp": "^0.3.2",
+        "vue-sonner": "^2.0.9"
     },
     "optionalDependencies": {
         "@rollup/rollup-linux-x64-gnu": "4.9.5",

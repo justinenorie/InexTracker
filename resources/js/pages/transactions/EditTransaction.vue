@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useToast } from '@/composables/useToast'
 import type { Category, Transaction } from '@/types'
 
 type Props = {
@@ -31,6 +32,7 @@ type Props = {
   categories: Category[]
 }
 
+const { success } = useToast()
 const props = defineProps<Props>()
 
 const isOpen = ref(false)
@@ -62,6 +64,7 @@ watch(
 
 const onSuccess = () => {
   isOpen.value = false
+  success('Transaction updated successfully')
 }
 </script>
 

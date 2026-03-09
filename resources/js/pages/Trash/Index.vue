@@ -21,6 +21,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useCurrency } from '@/composables/useCurrency'
+import { useToast } from '@/composables/useToast'
 import AppLayout from '@/layouts/AppLayout.vue'
 import categoriesRoutes from '@/routes/categories'
 import transactionsRoutes from '@/routes/transactions'
@@ -33,24 +34,41 @@ defineProps<{
 }>()
 
 const { formatMoney } = useCurrency()
+const { success } = useToast()
 
 const restoreCategory = (id: string) => {
-  router.post(categoriesRoutes.restore(id).url, {}, { preserveScroll: true })
+  router.post(
+    categoriesRoutes.restore(id).url,
+    {},
+    {
+      preserveScroll: true,
+      onSuccess: () => success('Category restored successfully'),
+    },
+  )
 }
 
 const forceDeleteCategory = (id: string) => {
   router.delete(categoriesRoutes.forceDelete(id).url, {
     preserveScroll: true,
+    onSuccess: () => success('Category deleted permanently'),
   })
 }
 
 const restoreTransaction = (id: string) => {
-  router.post(transactionsRoutes.restore(id).url, {}, { preserveScroll: true })
+  router.post(
+    transactionsRoutes.restore(id).url,
+    {},
+    {
+      preserveScroll: true,
+      onSuccess: () => success('Transaction restored successfully'),
+    },
+  )
 }
 
 const forceDeleteTransaction = (id: string) => {
   router.delete(transactionsRoutes.forceDelete(id).url, {
     preserveScroll: true,
+    onSuccess: () => success('Transaction deleted permanently'),
   })
 }
 

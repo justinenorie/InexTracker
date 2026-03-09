@@ -24,7 +24,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useToast } from '@/composables/useToast'
 
+const { success } = useToast()
 const isOpen = ref(false)
 
 const nameValue = ref('')
@@ -39,6 +41,7 @@ const reset = () => {
 
 const onSuccess = () => {
   isOpen.value = false
+  success('Category created successfully')
   reset()
 }
 </script>
