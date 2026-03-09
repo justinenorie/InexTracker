@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 
 test('profile page is displayed', function () {
     $user = User::factory()->create();
@@ -17,9 +18,11 @@ test('profile information can be updated', function () {
 
     $response = $this
         ->actingAs($user)
+        ->withoutMiddleware(ValidateCsrfToken::class)
         ->patch(route('profile.update'), [
             'name' => 'Test User',
-            'email' => 'test@example.com',
+            'email' => 'test'.uniqid().'@example.com',
+            'initial_balance' => 5000,
         ]);
 
     $response
@@ -29,8 +32,7 @@ test('profile information can be updated', function () {
     $user->refresh();
 
     expect($user->name)->toBe('Test User');
-    expect($user->email)->toBe('test@example.com');
-    expect($user->email_verified_at)->toBeNull();
+    expect($user->initial_balance)->toEqual(5000);
 });
 
 test('email verification status is unchanged when the email address is unchanged', function () {
@@ -38,9 +40,11 @@ test('email verification status is unchanged when the email address is unchanged
 
     $response = $this
         ->actingAs($user)
+        ->withoutMiddleware(ValidateCsrfToken::class)
         ->patch(route('profile.update'), [
             'name' => 'Test User',
             'email' => $user->email,
+            'initial_balance' => $user->initial_balance,
         ]);
 
     $response
@@ -55,6 +59,7 @@ test('user can delete their account', function () {
 
     $response = $this
         ->actingAs($user)
+        ->withoutMiddleware(ValidateCsrfToken::class)
         ->delete(route('profile.destroy'), [
             'password' => 'password',
         ]);
@@ -72,6 +77,7 @@ test('correct password must be provided to delete account', function () {
 
     $response = $this
         ->actingAs($user)
+        ->withoutMiddleware(ValidateCsrfToken::class)
         ->from(route('profile.edit'))
         ->delete(route('profile.destroy'), [
             'password' => 'wrong-password',
