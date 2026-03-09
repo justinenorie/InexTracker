@@ -1,5 +1,5 @@
 export type User = {
-    id: number;
+    id: string;
     name: string;
     email: string;
     avatar?: string;
@@ -8,6 +8,7 @@ export type User = {
     updated_at: string;
     [key: string]: unknown;
     initial_balance: string | number | undefined;
+    balance: string | number;
 };
 
 export type Auth = {

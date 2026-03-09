@@ -19,35 +19,7 @@ import CreateTransaction from '@/pages/transactions/CreateTransaction.vue';
 import DeleteTransaction from '@/pages/transactions/DeleteTransaction.vue';
 import EditTransaction from '@/pages/transactions/EditTransaction.vue';
 import { index } from '@/routes/transactions';
-import type { BreadcrumbItem } from '@/types';
-
-type Category = {
-    id: string;
-    name: string;
-    type: string;
-    color?: string | null;
-};
-
-type Transaction = {
-    id: string;
-    type: 'income' | 'expense' | string;
-    amount: string;
-    description?: string | null;
-    transacted_at: string;
-    category?: Category | null;
-    category_id?: string | null;
-};
-
-type PaginationLink = {
-    url: string | null;
-    label: string;
-    active: boolean;
-};
-
-type Paginator<T> = {
-    data: T[];
-    links: PaginationLink[];
-};
+import type { BreadcrumbItem, Category, Paginator, Transaction } from '@/types';
 
 type Props = {
     filters: {
@@ -88,7 +60,10 @@ const apply = () => {
         index.url({
             query: {
                 type: typeValue.value !== 'all' ? typeValue.value : undefined,
-                category_id: categoryValue.value !== 'all' ? categoryValue.value : undefined,
+                category_id:
+                    categoryValue.value !== 'all'
+                        ? categoryValue.value
+                        : undefined,
                 search: searchValue.value || undefined,
             },
         }),
@@ -173,22 +148,38 @@ const formatDate = (date: string) => {
                     </div>
                 </div>
 
-                <div class="mt-3 flex flex-wrap gap-2">
-                    <Button type="button" @click="apply">Apply</Button>
-                    <Button type="button" variant="outline" @click="clear"
+                <div class="mt-4 flex flex-col gap-2 sm:flex-row">
+                    <Button
+                        type="button"
+                        @click="apply"
+                        class="w-full sm:w-auto"
+                        >Apply</Button
+                    >
+                    <Button
+                        type="button"
+                        variant="outline"
+                        @click="clear"
+                        class="w-full sm:w-auto"
                         >Clear</Button
                     >
                 </div>
             </div>
 
             <div class="rounded-xl border bg-card p-4">
-                <div class="mb-3 flex items-center justify-between gap-3">
+                <div
+                    class="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+                >
                     <div class="text-sm font-medium">Results</div>
-                    <div class="flex items-center gap-3">
+                    <div
+                        class="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center"
+                    >
                         <div class="text-xs text-muted-foreground">
                             Showing {{ props.transactions.data.length }} item(s)
                         </div>
-                        <CreateTransaction :categories="props.categories" />
+                        <CreateTransaction
+                            :categories="props.categories"
+                            class="w-full sm:w-auto"
+                        />
                     </div>
                 </div>
 

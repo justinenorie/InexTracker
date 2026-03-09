@@ -13,17 +13,11 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-
-type Category = {
-    id: string;
-    name: string;
-    type: string;
-};
+import type { Category } from '@/types';
 
 type Props = {
     category: Category;
 };
-
 const props = defineProps<Props>();
 
 const isOpen = ref(false);

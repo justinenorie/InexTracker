@@ -25,16 +25,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import type { Category } from '@/types';
 
 defineOptions({
     inheritAttrs: false,
 });
-
-type Category = {
-    id: string;
-    name: string;
-    type: string;
-};
 
 type Props = {
     categories: Category[];

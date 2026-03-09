@@ -30,7 +30,17 @@ const df = new DateFormatter('en-US', {
 });
 
 const dateValue = computed({
-    get: () => (props.modelValue ? parseDate(props.modelValue) : undefined),
+    get: () => {
+        if (!props.modelValue) return undefined;
+        // Handle ISO 8601 strings (2026-03-06T00:00:00.000Z) or "YYYY-MM-DD HH:mm:ss"
+        const datePart = props.modelValue.split(/[T ]/)[0];
+        try {
+            return parseDate(datePart);
+        } catch (e) {
+            console.error('Failed to parse date:', props.modelValue, e);
+            return undefined;
+        }
+    },
     set: (val) => emit('update:modelValue', val?.toString()),
 });
 </script>

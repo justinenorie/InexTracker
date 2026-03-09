@@ -23,13 +23,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-
-type Category = {
-    id: string;
-    name: string;
-    type: 'income' | 'expense' | 'both' | string;
-    color?: string | null;
-};
+import type { Category } from '@/types';
 
 type Props = {
     category: Category;

@@ -7,14 +7,7 @@ import CreateCategory from '@/pages/categories/CreateCategory.vue';
 import DeleteCategory from '@/pages/categories/DeleteCategory.vue';
 import EditCategory from '@/pages/categories/EditCategory.vue';
 import { index } from '@/routes/categories';
-import type { BreadcrumbItem } from '@/types';
-
-type Category = {
-    id: string;
-    name: string;
-    type: 'income' | 'expense' | 'both' | string;
-    color?: string | null;
-};
+import type { BreadcrumbItem, Category } from '@/types';
 
 type Props = {
     categories: Category[];
@@ -36,9 +29,11 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Categories', href: index() }];
             />
 
             <div class="rounded-xl border bg-card p-4">
-                <div class="mb-3 flex items-center justify-between gap-3">
+                <div
+                    class="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+                >
                     <div class="text-sm font-medium">Categories</div>
-                    <CreateCategory />
+                    <CreateCategory class="w-full sm:w-auto" />
                 </div>
 
                 <div

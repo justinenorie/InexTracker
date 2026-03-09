@@ -13,18 +13,11 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-
-type Transaction = {
-    id: string;
-    transacted_at: string;
-    amount: string;
-    type: string;
-};
+import type { Transaction } from '@/types';
 
 type Props = {
     transaction: Transaction;
 };
-
 const props = defineProps<Props>();
 
 const isOpen = ref(false);

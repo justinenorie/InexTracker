@@ -11,41 +11,22 @@ import { useCurrency } from '@/composables/useCurrency';
 import AppLayout from '@/layouts/AppLayout.vue';
 import CreateTransaction from '@/pages/transactions/CreateTransaction.vue';
 import { dashboard } from '@/routes';
-import type { BreadcrumbItem } from '@/types';
-
-type Totals = {
-    total_income: string;
-    total_expense: string;
-};
-
-type Category = {
-    id: string;
-    name: string;
-    type: string;
-    color?: string | null;
-};
-
-type TotalsByCategoryRow = {
-    category_id: string;
-    category_name: string;
-    category_color: string;
-    type: 'income' | 'expense' | string;
-    total: string;
-};
+import type {
+    BreadcrumbItem,
+    Category,
+    DashboardHistoryItem,
+    DashboardTotals,
+    TotalsByCategoryRow,
+} from '@/types';
 
 type Props = {
     filters: {
         from?: string | null;
         to?: string | null;
     };
-    totals: Totals;
+    totals: DashboardTotals;
     totalsByCategory: TotalsByCategoryRow[];
-    history: {
-        period: string;
-        label: string;
-        income: number;
-        expense: number;
-    }[];
+    history: DashboardHistoryItem[];
     categories: Category[];
 };
 

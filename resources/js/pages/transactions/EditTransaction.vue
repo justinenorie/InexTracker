@@ -24,22 +24,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-
-type Category = {
-    id: string;
-    name: string;
-    type: string;
-};
-
-type Transaction = {
-    id: string;
-    type: 'income' | 'expense' | string;
-    category_id?: string | null;
-    amount: string;
-    transacted_at: string;
-    description?: string | null;
-    category?: Category | null;
-};
+import type { Category, Transaction } from '@/types';
 
 type Props = {
     transaction: Transaction;

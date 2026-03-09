@@ -25,27 +25,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import categoriesRoutes from '@/routes/categories';
 import transactionsRoutes from '@/routes/transactions';
 import { trash } from '@/routes/transactions';
-import type { BreadcrumbItem } from '@/types';
-
-interface Category {
-    id: string;
-    name: string;
-    type: string;
-    color: string;
-    deleted_at: string;
-}
-
-interface Transaction {
-    id: string;
-    amount: string;
-    description: string;
-    type: string;
-    transacted_at: string;
-    deleted_at: string;
-    category?: {
-        name: string;
-    };
-}
+import type { BreadcrumbItem, Category, Transaction } from '@/types';
 
 defineProps<{
     transactions: Transaction[];
@@ -129,9 +109,9 @@ const formatDate = (date: string) => {
                                     <div class="flex items-center gap-2">
                                         <div
                                             :style="{
-                                                backgroundColor: category.color,
+                                                backgroundColor:
+                                                    category.color ?? '',
                                             }"
-                                            class="h-3 w-3 rounded-full"
                                         ></div>
                                         {{ category.name }}
                                     </div>
@@ -149,7 +129,7 @@ const formatDate = (date: string) => {
                                     </Badge>
                                 </TableCell>
                                 <TableCell>{{
-                                    formatDate(category.deleted_at)
+                                    formatDate(category.deleted_at ?? '')
                                 }}</TableCell>
                                 <TableCell class="text-right">
                                     <div class="flex justify-end gap-2">
@@ -232,7 +212,7 @@ const formatDate = (date: string) => {
                                     {{ formatMoney(transaction.amount) }}
                                 </TableCell>
                                 <TableCell>{{
-                                    formatDate(transaction.deleted_at)
+                                    formatDate(transaction.deleted_at ?? '')
                                 }}</TableCell>
                                 <TableCell class="text-right">
                                     <div class="flex justify-end gap-2">
