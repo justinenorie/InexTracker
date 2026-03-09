@@ -171,11 +171,19 @@ class DashboardMetricsService
         $daysDiff = $from->diffInDays($to);
         $groupByDay = $daysDiff <= 60;
 
-        $dateFormat = $groupByDay ? '%Y-%m-%d' : '%Y-%m';
+        $driver = DB::getDriverName();
+
+        if ($driver === 'sqlite') {
+            $dateFormat = $groupByDay ? '%Y-%m-%d' : '%Y-%m';
+            $dateSelect = "strftime('{$dateFormat}', transacted_at)";
+        } else {
+            $dateFormat = $groupByDay ? '%Y-%m-%d' : '%Y-%m';
+            $dateSelect = "DATE_FORMAT(transacted_at, '{$dateFormat}')";
+        }
 
         $results = $query
             ->select([
-                DB::raw("DATE_FORMAT(transacted_at, '{$dateFormat}') as period"),
+                DB::raw("{$dateSelect} as period"),
                 'type',
                 DB::raw('SUM(amount) as total'),
             ])
