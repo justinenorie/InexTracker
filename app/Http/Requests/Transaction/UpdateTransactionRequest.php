@@ -29,7 +29,7 @@ class UpdateTransactionRequest extends FormRequest
                 'required',
                 'uuid',
                 Rule::exists('categories', 'id')->where(
-                    fn($q) => $q
+                    fn ($q) => $q
                         ->where('user_id', $userId)
                         ->whereNull('deleted_at')
                 ),

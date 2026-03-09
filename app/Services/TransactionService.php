@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionService
 {
-    protected $queryService, $softDeletes;
+    protected $queryService;
+
+    protected $softDeletes;
 
     public function __construct(DashboardMetricsService $queryService, SoftDeleteService $softDeletes)
     {
@@ -62,7 +64,7 @@ class TransactionService
 
         $transaction = Transaction::create($data);
 
-        $user->increment('balance', (float)$transaction->amount);
+        $user->increment('balance', (float) $transaction->amount);
 
         return $transaction;
     }
@@ -105,7 +107,7 @@ class TransactionService
         $deleted = $transaction->delete();
 
         if ($deleted) {
-            $user->decrement('balance', (float)$amount);
+            $user->decrement('balance', (float) $amount);
         }
 
         return $deleted;
@@ -158,7 +160,7 @@ class TransactionService
             ->sum('amount');
 
         $user->update([
-            'balance' => $user->initial_balance + $transactionsSum
+            'balance' => $user->initial_balance + $transactionsSum,
         ]);
     }
 }

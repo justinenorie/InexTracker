@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\DashboardMetricsService;
 use App\Services\CategoryService;
+use App\Services\DashboardMetricsService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    protected $service, $categoryService;
+    protected $service;
+
+    protected $categoryService;
 
     public function __construct(DashboardMetricsService $service, CategoryService $categoryService)
     {

@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\Auth;
 
 class CategoryService
 {
-    protected $softDeletes, $transactionService;
+    protected $softDeletes;
+
+    protected $transactionService;
 
     public function __construct(SoftDeleteService $softDeletes, TransactionService $transactionService)
     {

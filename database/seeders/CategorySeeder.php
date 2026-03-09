@@ -16,7 +16,7 @@ class CategorySeeder extends Seeder
     {
         $user = User::query()->first() ?? User::factory()->create([
             'name' => 'Seeder User',
-            'email' => 'seeder+' . Str::random(8) . '@example.com',
+            'email' => 'seeder+'.Str::random(8).'@example.com',
         ]);
 
         $defaults = [

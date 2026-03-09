@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Transaction\StoreTransactionRequest;
 use App\Http\Requests\Transaction\UpdateTransactionRequest;
-use App\Services\CategoryService;
 use App\Models\Transaction;
+use App\Services\CategoryService;
 use App\Services\TransactionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,7 +14,9 @@ use Inertia\Response;
 
 class TransactionController extends Controller
 {
-    protected $service, $categoryService;
+    protected $service;
+
+    protected $categoryService;
 
     public function __construct(TransactionService $service, CategoryService $categoryService)
     {
@@ -54,30 +56,35 @@ class TransactionController extends Controller
     public function store(StoreTransactionRequest $request): RedirectResponse
     {
         $this->service->createTransaction($request->validated());
+
         return back()->with('success', 'Transaction recorded successfully!');
     }
 
     public function update(UpdateTransactionRequest $request, Transaction $transaction): RedirectResponse
     {
         $this->service->updateTransaction($transaction, $request->validated());
+
         return back();
     }
 
     public function destroy(Transaction $transaction): RedirectResponse
     {
         $this->service->deleteTransaction($transaction);
+
         return back();
     }
 
     public function restore(Request $request, string $id): RedirectResponse
     {
         $this->service->restoreTransaction($id, $request->user());
+
         return back()->with('success', 'Transaction restored successfully!');
     }
 
     public function forceDelete(Request $request, string $id): RedirectResponse
     {
         $this->service->forceDeleteTransaction($id, $request->user());
+
         return back()->with('success', 'Transaction permanently deleted.');
     }
 }
