@@ -6,13 +6,21 @@ use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CategoryService
 {
+    /** @var SoftDeleteService */
     protected $softDeletes;
 
+    /** @var TransactionService */
     protected $transactionService;
 
+    /**
+     * @param  SoftDeleteService  $softDeletes the soft delete service
+     * @param  TransactionService  $transactionService the transaction service
+     * @return void
+     */
     public function __construct(SoftDeleteService $softDeletes, TransactionService $transactionService)
     {
         $this->softDeletes = $softDeletes;
@@ -21,6 +29,9 @@ class CategoryService
 
     /**
      * Get all categories for a user.
+     *
+     * @param  User  $user the user instance
+     * @return Collection
      */
     public function getCategoriesForUser(User $user): Collection
     {
@@ -33,6 +44,9 @@ class CategoryService
 
     /**
      * Create a new category.
+     *
+     * @param  array  $data the category data
+     * @return Category
      */
     public function createCategory(array $data): Category
     {
@@ -43,6 +57,10 @@ class CategoryService
 
     /**
      * Update an existing category.
+     *
+     * @param  Category  $category the category instance
+     * @param  array  $data the update data
+     * @return bool
      */
     public function updateCategory(Category $category, array $data): bool
     {
@@ -51,21 +69,29 @@ class CategoryService
 
     /**
      * Delete a category.
+     *
+     * @param  Category  $category the category instance
+     * @return bool|null
      */
     public function deleteCategory(Category $category): ?bool
     {
-        $user = $category->user;
-        $deleted = $category->delete();
+        return DB::transaction(function () use ($category) {
+            $user = $category->user;
+            $deleted = $category->delete();
 
-        if ($deleted) {
-            $this->transactionService->recalculateBalance($user);
-        }
+            if ($deleted) {
+                $this->transactionService->recalculateBalance($user);
+            }
 
-        return $deleted;
+            return $deleted;
+        });
     }
 
     /**
      * Get trashed categories for a user.
+     *
+     * @param  User  $user the user instance
+     * @return Collection
      */
     public function getTrashedCategoriesForUser(User $user): Collection
     {
@@ -74,20 +100,30 @@ class CategoryService
 
     /**
      * Restore a trashed category.
+     *
+     * @param  string  $id the unique id
+     * @param  User  $user the user instance
+     * @return bool
      */
     public function restoreCategory(string $id, User $user): bool
     {
-        $restored = $this->softDeletes->restoreForUser(Category::class, $id, $user);
+        return DB::transaction(function () use ($id, $user) {
+            $restored = $this->softDeletes->restoreForUser(Category::class, $id, $user);
 
-        if ($restored) {
-            $this->transactionService->recalculateBalance($user);
-        }
+            if ($restored) {
+                $this->transactionService->recalculateBalance($user);
+            }
 
-        return $restored;
+            return $restored;
+        });
     }
 
     /**
      * Permanently delete a category.
+     *
+     * @param  string  $id the unique id
+     * @param  User  $user the user instance
+     * @return bool
      */
     public function forceDeleteCategory(string $id, User $user): bool
     {

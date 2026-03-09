@@ -14,16 +14,29 @@ use Inertia\Response;
 
 class TransactionController extends Controller
 {
+    /** @var TransactionService */
     protected $service;
 
+    /** @var CategoryService */
     protected $categoryService;
 
+    /**
+     * @param  TransactionService  $service the transaction service instance
+     * @param  CategoryService  $categoryService the category service instance
+     * @return void
+     */
     public function __construct(TransactionService $service, CategoryService $categoryService)
     {
         $this->service = $service;
         $this->categoryService = $categoryService;
     }
 
+    /**
+     * Display a listing of transactions.
+     *
+     * @param  Request  $request the incoming request
+     * @return Response
+     */
     public function index(Request $request): Response
     {
         $user = $request->user();
@@ -43,6 +56,12 @@ class TransactionController extends Controller
         ]);
     }
 
+    /**
+     * Display a listing of trashed transactions.
+     *
+     * @param  Request  $request the incoming request
+     * @return Response
+     */
     public function trash(Request $request): Response
     {
         $user = $request->user();
@@ -53,6 +72,12 @@ class TransactionController extends Controller
         ]);
     }
 
+    /**
+     * Store a new transaction.
+     *
+     * @param  StoreTransactionRequest  $request the store request
+     * @return RedirectResponse
+     */
     public function store(StoreTransactionRequest $request): RedirectResponse
     {
         $this->service->createTransaction($request->validated());
@@ -60,6 +85,13 @@ class TransactionController extends Controller
         return back()->with('success', 'Transaction recorded successfully!');
     }
 
+    /**
+     * Update an existing transaction.
+     *
+     * @param  UpdateTransactionRequest  $request the update request
+     * @param  Transaction  $transaction the transaction model instance
+     * @return RedirectResponse
+     */
     public function update(UpdateTransactionRequest $request, Transaction $transaction): RedirectResponse
     {
         $this->service->updateTransaction($transaction, $request->validated());
@@ -67,6 +99,12 @@ class TransactionController extends Controller
         return back();
     }
 
+    /**
+     * Delete an existing transaction.
+     *
+     * @param  Transaction  $transaction the transaction model instance
+     * @return RedirectResponse
+     */
     public function destroy(Transaction $transaction): RedirectResponse
     {
         $this->service->deleteTransaction($transaction);
@@ -74,6 +112,13 @@ class TransactionController extends Controller
         return back();
     }
 
+    /**
+     * Restore a trashed transaction.
+     *
+     * @param  Request  $request the incoming request
+     * @param  string  $id the transaction unique id
+     * @return RedirectResponse
+     */
     public function restore(Request $request, string $id): RedirectResponse
     {
         $this->service->restoreTransaction($id, $request->user());
@@ -81,6 +126,13 @@ class TransactionController extends Controller
         return back()->with('success', 'Transaction restored successfully!');
     }
 
+    /**
+     * Permanently delete a trashed transaction.
+     *
+     * @param  Request  $request the incoming request
+     * @param  string  $id the transaction unique id
+     * @return RedirectResponse
+     */
     public function forceDelete(Request $request, string $id): RedirectResponse
     {
         $this->service->forceDeleteTransaction($id, $request->user());

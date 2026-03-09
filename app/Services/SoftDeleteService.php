@@ -3,71 +3,78 @@
 namespace App\Services;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class SoftDeleteService
 {
     /**
-     * List trashed records for a user.
+     * List all trashed records for a user.
      *
-     * Assumes the model has a `user_id` column and uses SoftDeletes.
-     *
-     * @template TModel of Model
-     *
-     * @param  class-string<TModel>  $modelClass
-     * @param  array<int, string>  $with
-     * @param  (callable(Builder<TModel>): void)|null  $tap
-     * @return Collection<int, TModel>
+     * @param  string  $modelClass the model class name
+     * @param  User  $user the user instance
+     * @param  array  $with the relationships to eager load
+     * @return Collection
      */
-    public function listTrashedForUser(string $modelClass, User $user, array $with = [], ?callable $tap = null): Collection
+    public function listTrashedForUser(string $modelClass, User $user, array $with = []): Collection
     {
-        /** @var Builder<TModel> $query */
-        $query = $modelClass::onlyTrashed()->where('user_id', $user->id);
+        /** @var Model $query */
+        $query = new $modelClass();
 
-        if ($with !== []) {
-            $query->with($with);
-        }
-
-        if ($tap) {
-            $tap($query);
-        }
-
-        return $query->orderByDesc('deleted_at')->get();
+        return $query::onlyTrashed()
+            ->where('user_id', $user->id)
+            ->with($with)
+            ->orderByDesc('deleted_at')
+            ->get();
     }
 
     /**
-     * Restore a trashed record by id for a user.
+     * Restore a trashed record for a user.
      *
-     * @template TModel of Model
-     *
-     * @param  class-string<TModel>  $modelClass
+     * @param  string  $modelClass the model class name
+     * @param  string  $id the record unique id
+     * @param  User  $user the user instance
+     * @return bool
      */
     public function restoreForUser(string $modelClass, string $id, User $user): bool
     {
-        /** @var TModel $model */
-        $model = $modelClass::onlyTrashed()
-            ->where('user_id', $user->id)
-            ->findOrFail($id);
+        /** @var Model $query */
+        $query = new $modelClass();
 
-        return (bool) $model->restore();
+        $record = $query::onlyTrashed()
+            ->where('id', $id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if ($record) {
+            return $record->restore();
+        }
+
+        return false;
     }
 
     /**
-     * Permanently delete a trashed record by id for a user.
+     * Permanently delete a trashed record for a user.
      *
-     * @template TModel of Model
-     *
-     * @param  class-string<TModel>  $modelClass
+     * @param  string  $modelClass the model class name
+     * @param  string  $id the record unique id
+     * @param  User  $user the user instance
+     * @return bool
      */
     public function forceDeleteForUser(string $modelClass, string $id, User $user): bool
     {
-        /** @var TModel $model */
-        $model = $modelClass::onlyTrashed()
-            ->where('user_id', $user->id)
-            ->findOrFail($id);
+        /** @var Model $query */
+        $query = new $modelClass();
 
-        return (bool) $model->forceDelete();
+        $record = $query::onlyTrashed()
+            ->where('id', $id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if ($record) {
+            return $record->forceDelete();
+        }
+
+        return false;
     }
 }

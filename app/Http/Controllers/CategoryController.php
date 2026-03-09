@@ -13,13 +13,24 @@ use Inertia\Response;
 
 class CategoryController extends Controller
 {
+    /** @var CategoryService */
     protected $service;
 
+    /**
+     * @param  CategoryService  $service the category service instance
+     * @return void
+     */
     public function __construct(CategoryService $service)
     {
         $this->service = $service;
     }
 
+    /**
+     * Display a listing of categories.
+     *
+     * @param  Request  $request the incoming request
+     * @return Response
+     */
     public function index(Request $request): Response
     {
         $user = $request->user();
@@ -31,6 +42,12 @@ class CategoryController extends Controller
         ]);
     }
 
+    /**
+     * Store a new category.
+     *
+     * @param  StoreCategoryRequest  $request the store request
+     * @return RedirectResponse
+     */
     public function store(StoreCategoryRequest $request): RedirectResponse
     {
         $this->service->createCategory($request->validated());
@@ -38,6 +55,13 @@ class CategoryController extends Controller
         return back();
     }
 
+    /**
+     * Update an existing category.
+     *
+     * @param  UpdateCategoryRequest  $request the update request
+     * @param  Category  $category the category instance
+     * @return RedirectResponse
+     */
     public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
         $this->service->updateCategory($category, $request->validated());
@@ -45,6 +69,12 @@ class CategoryController extends Controller
         return back();
     }
 
+    /**
+     * Delete an existing category.
+     *
+     * @param  Category  $category the category instance
+     * @return RedirectResponse
+     */
     public function destroy(Category $category): RedirectResponse
     {
         $this->service->deleteCategory($category);
@@ -52,6 +82,13 @@ class CategoryController extends Controller
         return back();
     }
 
+    /**
+     * Restore a trashed category.
+     *
+     * @param  Request  $request the incoming request
+     * @param  string  $id the category unique id
+     * @return RedirectResponse
+     */
     public function restore(Request $request, string $id): RedirectResponse
     {
         $this->service->restoreCategory($id, $request->user());
@@ -59,6 +96,13 @@ class CategoryController extends Controller
         return back()->with('success', 'Category restored successfully!');
     }
 
+    /**
+     * Permanently delete a trashed category.
+     *
+     * @param  Request  $request the incoming request
+     * @param  string  $id the category unique id
+     * @return RedirectResponse
+     */
     public function forceDelete(Request $request, string $id): RedirectResponse
     {
         $this->service->forceDeleteCategory($id, $request->user());

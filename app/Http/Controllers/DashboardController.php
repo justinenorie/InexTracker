@@ -10,16 +10,29 @@ use Inertia\Response;
 
 class DashboardController extends Controller
 {
+    /** @var DashboardMetricsService */
     protected $service;
 
+    /** @var CategoryService */
     protected $categoryService;
 
+    /**
+     * @param  DashboardMetricsService  $service the dashboard metrics service instance
+     * @param  CategoryService  $categoryService the category service instance
+     * @return void
+     */
     public function __construct(DashboardMetricsService $service, CategoryService $categoryService)
     {
         $this->service = $service;
         $this->categoryService = $categoryService;
     }
 
+    /**
+     * Display the dashboard.
+     *
+     * @param  Request  $request the incoming request
+     * @return Response
+     */
     public function index(Request $request): Response
     {
         $user = $request->user();

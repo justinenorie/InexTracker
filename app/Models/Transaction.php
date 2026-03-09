@@ -12,8 +12,10 @@ class Transaction extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /** @var bool */
     public $incrementing = false;
 
+    /** @var string */
     protected $keyType = 'string';
 
     /**

@@ -14,8 +14,10 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, HasUuids, Notifiable, TwoFactorAuthenticatable;
 
+    /** @var bool */
     public $incrementing = false;
 
+    /** @var string */
     protected $keyType = 'string';
 
     /**

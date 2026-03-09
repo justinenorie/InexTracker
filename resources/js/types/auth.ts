@@ -1,22 +1,22 @@
 export type User = {
-    id: string;
-    name: string;
-    email: string;
-    avatar?: string;
-    email_verified_at: string | null;
-    created_at: string;
-    updated_at: string;
-    [key: string]: unknown;
-    initial_balance: string | number | undefined;
-    balance: string | number;
-};
+  id: string
+  name: string
+  email: string
+  avatar?: string
+  email_verified_at: string | null
+  created_at: string
+  updated_at: string
+  [key: string]: unknown
+  initial_balance: string | number | undefined
+  balance: string | number
+}
 
 export type Auth = {
-    user: User;
-};
+  user: User
+}
 
 export type TwoFactorConfigContent = {
-    title: string;
-    description: string;
-    buttonText: string;
-};
+  title: string
+  description: string
+  buttonText: string
+}

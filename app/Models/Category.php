@@ -13,8 +13,10 @@ class Category extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /** @var bool */
     public $incrementing = false;
 
+    /** @var string */
     protected $keyType = 'string';
 
     /**
@@ -27,22 +29,6 @@ class Category extends Model
         'color',
     ];
 
-    protected static function booted(): void
-    {
-        static::deleting(function (Category $category) {
-            if ($category->isForceDeleting()) {
-                $category->transactions()->withTrashed()->forceDelete();
-                return;
-            }
-
-            $category->transactions()->delete();
-        });
-
-        static::restored(function (Category $category) {
-            $category->transactions()->withTrashed()->restore();
-        });
-    }
-
     /**
      * @return BelongsTo<User, Category>
      */
@@ -52,7 +38,7 @@ class Category extends Model
     }
 
     /**
-     * @return HasMany<Transaction, Category>
+     * @return HasMany<Transaction>
      */
     public function transactions(): HasMany
     {
