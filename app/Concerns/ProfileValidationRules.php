@@ -17,7 +17,7 @@ trait ProfileValidationRules
         return [
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
-            'initial_balance' => ['required', 'numeric', 'min:0'],
+            'initial_balance' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 
