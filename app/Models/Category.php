@@ -30,6 +30,26 @@ class Category extends Model
     ];
 
     /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::deleting(function (Category $category) {
+            if ($category->isForceDeleting()) {
+                $category->transactions()->withTrashed()->forceDelete();
+
+                return;
+            }
+
+            $category->transactions()->delete();
+        });
+
+        static::restored(function (Category $category) {
+            $category->transactions()->withTrashed()->restore();
+        });
+    }
+
+    /**
      * @return BelongsTo<User, Category>
      */
     public function user(): BelongsTo

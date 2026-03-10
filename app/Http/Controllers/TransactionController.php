@@ -21,8 +21,8 @@ class TransactionController extends Controller
     protected $categoryService;
 
     /**
-     * @param  TransactionService  $service the transaction service instance
-     * @param  CategoryService  $categoryService the category service instance
+     * @param  TransactionService  $service  the transaction service instance
+     * @param  CategoryService  $categoryService  the category service instance
      * @return void
      */
     public function __construct(TransactionService $service, CategoryService $categoryService)
@@ -34,8 +34,7 @@ class TransactionController extends Controller
     /**
      * Display a listing of transactions.
      *
-     * @param  Request  $request the incoming request
-     * @return Response
+     * @param  Request  $request  the incoming request
      */
     public function index(Request $request): Response
     {
@@ -59,8 +58,7 @@ class TransactionController extends Controller
     /**
      * Display a listing of trashed transactions.
      *
-     * @param  Request  $request the incoming request
-     * @return Response
+     * @param  Request  $request  the incoming request
      */
     public function trash(Request $request): Response
     {
@@ -75,8 +73,7 @@ class TransactionController extends Controller
     /**
      * Store a new transaction.
      *
-     * @param  StoreTransactionRequest  $request the store request
-     * @return RedirectResponse
+     * @param  StoreTransactionRequest  $request  the store request
      */
     public function store(StoreTransactionRequest $request): RedirectResponse
     {
@@ -88,9 +85,8 @@ class TransactionController extends Controller
     /**
      * Update an existing transaction.
      *
-     * @param  UpdateTransactionRequest  $request the update request
-     * @param  Transaction  $transaction the transaction model instance
-     * @return RedirectResponse
+     * @param  UpdateTransactionRequest  $request  the update request
+     * @param  Transaction  $transaction  the transaction model instance
      */
     public function update(UpdateTransactionRequest $request, Transaction $transaction): RedirectResponse
     {
@@ -102,8 +98,7 @@ class TransactionController extends Controller
     /**
      * Delete an existing transaction.
      *
-     * @param  Transaction  $transaction the transaction model instance
-     * @return RedirectResponse
+     * @param  Transaction  $transaction  the transaction model instance
      */
     public function destroy(Transaction $transaction): RedirectResponse
     {
@@ -115,9 +110,8 @@ class TransactionController extends Controller
     /**
      * Restore a trashed transaction.
      *
-     * @param  Request  $request the incoming request
-     * @param  string  $id the transaction unique id
-     * @return RedirectResponse
+     * @param  Request  $request  the incoming request
+     * @param  string  $id  the transaction unique id
      */
     public function restore(Request $request, string $id): RedirectResponse
     {
@@ -129,9 +123,8 @@ class TransactionController extends Controller
     /**
      * Permanently delete a trashed transaction.
      *
-     * @param  Request  $request the incoming request
-     * @param  string  $id the transaction unique id
-     * @return RedirectResponse
+     * @param  Request  $request  the incoming request
+     * @param  string  $id  the transaction unique id
      */
     public function forceDelete(Request $request, string $id): RedirectResponse
     {

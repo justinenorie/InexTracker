@@ -13,7 +13,7 @@ class DashboardMetricsService
     /**
      * Start a base transaction query scoped to a user.
      *
-     * @param  User  $user the user instance
+     * @param  User  $user  the user instance
      * @return Builder<Transaction>
      */
     public function queryForUser(User $user): Builder
@@ -24,8 +24,8 @@ class DashboardMetricsService
     /**
      * Apply common filters.
      *
-     * @param  Builder<Transaction>  $query the query builder instance
-     * @param  array  $filters the filters to apply
+     * @param  Builder<Transaction>  $query  the query builder instance
+     * @param  array  $filters  the filters to apply
      * @return Builder<Transaction>
      */
     public function applyFilters(Builder $query, array $filters): Builder
@@ -74,7 +74,7 @@ class DashboardMetricsService
     /**
      * Apply the default ordering for lists.
      *
-     * @param  Builder<Transaction>  $query the query builder instance
+     * @param  Builder<Transaction>  $query  the query builder instance
      * @return Builder<Transaction>
      */
     public function applyDefaultSort(Builder $query): Builder
@@ -87,9 +87,8 @@ class DashboardMetricsService
     /**
      * Dashboard totals (income, expense) scoped to a user.
      *
-     * @param  User  $user the user instance
-     * @param  array  $filters the dashboard filters
-     * @return array
+     * @param  User  $user  the user instance
+     * @param  array  $filters  the dashboard filters
      */
     public function totals(User $user, array $filters = []): array
     {
@@ -113,9 +112,8 @@ class DashboardMetricsService
     /**
      * Breakdown totals by category.
      *
-     * @param  User  $user the user instance
-     * @param  array  $filters the dashboard filters
-     * @return array
+     * @param  User  $user  the user instance
+     * @param  array  $filters  the dashboard filters
      */
     public function totalsByCategory(User $user, array $filters = []): array
     {
@@ -150,9 +148,8 @@ class DashboardMetricsService
     /**
      * Get historical totals (income vs expense) grouped by period (day or month).
      *
-     * @param  User  $user the user instance
-     * @param  array  $filters the dashboard filters
-     * @return array
+     * @param  User  $user  the user instance
+     * @param  array  $filters  the dashboard filters
      */
     public function getHistory(User $user, array $filters = []): array
     {
@@ -231,8 +228,7 @@ class DashboardMetricsService
     /**
      * Sum the amounts for the given query.
      *
-     * @param  Builder  $query the query builder instance
-     * @return string
+     * @param  Builder  $query  the query builder instance
      */
     private function sumAmount(Builder $query): string
     {
@@ -246,8 +242,7 @@ class DashboardMetricsService
     /**
      * Parse the given value as a Carbon date.
      *
-     * @param  mixed  $value the value to parse
-     * @return Carbon|null
+     * @param  mixed  $value  the value to parse
      */
     private function parseDate(mixed $value): ?Carbon
     {

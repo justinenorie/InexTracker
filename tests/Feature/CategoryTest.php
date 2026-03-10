@@ -68,19 +68,30 @@ test('users cannot update others categories', function () {
     $response->assertForbidden();
 });
 
-test('users can soft delete their category', function () {
+test('users can soft delete their category and its transactions are also soft deleted', function () {
     $user = User::factory()->create();
     $category = Category::factory()->create(['user_id' => $user->id]);
+    $transaction = \App\Models\Transaction::factory()->create([
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+    ]);
 
     $response = $this->actingAs($user)->withoutMiddleware(ValidateCsrfToken::class)->delete(route('categories.destroy', $category));
 
     $response->assertRedirect();
     $this->assertSoftDeleted($category);
+    $this->assertSoftDeleted($transaction);
 });
 
-test('users can restore a deleted category', function () {
+test('users can restore a deleted category and its transactions are also restored', function () {
     $user = User::factory()->create();
     $category = Category::factory()->create(['user_id' => $user->id]);
+    $transaction = \App\Models\Transaction::factory()->create([
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+    ]);
+
+    $category->transactions()->delete();
     $category->delete();
 
     $response = $this->actingAs($user)->withoutMiddleware(ValidateCsrfToken::class)->post(route('categories.restore', $category->id));
@@ -90,15 +101,26 @@ test('users can restore a deleted category', function () {
         'id' => $category->id,
         'deleted_at' => null,
     ]);
+    $this->assertDatabaseHas('transactions', [
+        'id' => $transaction->id,
+        'deleted_at' => null,
+    ]);
 });
 
-test('users can force delete a category', function () {
+test('users can force delete a category and its transactions are also force deleted', function () {
     $user = User::factory()->create();
     $category = Category::factory()->create(['user_id' => $user->id]);
+    $transaction = \App\Models\Transaction::factory()->create([
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+    ]);
+
+    $category->transactions()->delete();
     $category->delete();
 
     $response = $this->actingAs($user)->withoutMiddleware(ValidateCsrfToken::class)->delete(route('categories.force-delete', $category->id));
 
     $response->assertRedirect();
     $this->assertDatabaseMissing('categories', ['id' => $category->id]);
+    $this->assertDatabaseMissing('transactions', ['id' => $transaction->id]);
 });

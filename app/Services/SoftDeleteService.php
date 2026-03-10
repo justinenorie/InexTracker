@@ -11,15 +11,14 @@ class SoftDeleteService
     /**
      * List all trashed records for a user.
      *
-     * @param  string  $modelClass the model class name
-     * @param  User  $user the user instance
-     * @param  array  $with the relationships to eager load
-     * @return Collection
+     * @param  string  $modelClass  the model class name
+     * @param  User  $user  the user instance
+     * @param  array  $with  the relationships to eager load
      */
     public function listTrashedForUser(string $modelClass, User $user, array $with = []): Collection
     {
         /** @var Model $query */
-        $query = new $modelClass();
+        $query = new $modelClass;
 
         return $query::onlyTrashed()
             ->where('user_id', $user->id)
@@ -31,15 +30,14 @@ class SoftDeleteService
     /**
      * Restore a trashed record for a user.
      *
-     * @param  string  $modelClass the model class name
-     * @param  string  $id the record unique id
-     * @param  User  $user the user instance
-     * @return bool
+     * @param  string  $modelClass  the model class name
+     * @param  string  $id  the record unique id
+     * @param  User  $user  the user instance
      */
     public function restoreForUser(string $modelClass, string $id, User $user): bool
     {
         /** @var Model $query */
-        $query = new $modelClass();
+        $query = new $modelClass;
 
         $record = $query::onlyTrashed()
             ->where('id', $id)
@@ -56,15 +54,14 @@ class SoftDeleteService
     /**
      * Permanently delete a trashed record for a user.
      *
-     * @param  string  $modelClass the model class name
-     * @param  string  $id the record unique id
-     * @param  User  $user the user instance
-     * @return bool
+     * @param  string  $modelClass  the model class name
+     * @param  string  $id  the record unique id
+     * @param  User  $user  the user instance
      */
     public function forceDeleteForUser(string $modelClass, string $id, User $user): bool
     {
         /** @var Model $query */
-        $query = new $modelClass();
+        $query = new $modelClass;
 
         $record = $query::onlyTrashed()
             ->where('id', $id)

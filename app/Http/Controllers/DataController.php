@@ -13,7 +13,7 @@ class DataController extends Controller
     protected $metricsService;
 
     /**
-     * @param  DashboardMetricsService  $metricsService the metrics service instance
+     * @param  DashboardMetricsService  $metricsService  the metrics service instance
      * @return void
      */
     public function __construct(DashboardMetricsService $metricsService)
@@ -24,8 +24,7 @@ class DataController extends Controller
     /**
      * Export transactions to a CSV file.
      *
-     * @param  Request  $request the incoming request
-     * @return StreamedResponse
+     * @param  Request  $request  the incoming request
      */
     public function exportTransactionsCsv(Request $request): StreamedResponse
     {

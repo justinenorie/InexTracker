@@ -17,7 +17,7 @@ class CategoryController extends Controller
     protected $service;
 
     /**
-     * @param  CategoryService  $service the category service instance
+     * @param  CategoryService  $service  the category service instance
      * @return void
      */
     public function __construct(CategoryService $service)
@@ -28,8 +28,7 @@ class CategoryController extends Controller
     /**
      * Display a listing of categories.
      *
-     * @param  Request  $request the incoming request
-     * @return Response
+     * @param  Request  $request  the incoming request
      */
     public function index(Request $request): Response
     {
@@ -45,8 +44,7 @@ class CategoryController extends Controller
     /**
      * Store a new category.
      *
-     * @param  StoreCategoryRequest  $request the store request
-     * @return RedirectResponse
+     * @param  StoreCategoryRequest  $request  the store request
      */
     public function store(StoreCategoryRequest $request): RedirectResponse
     {
@@ -58,9 +56,8 @@ class CategoryController extends Controller
     /**
      * Update an existing category.
      *
-     * @param  UpdateCategoryRequest  $request the update request
-     * @param  Category  $category the category instance
-     * @return RedirectResponse
+     * @param  UpdateCategoryRequest  $request  the update request
+     * @param  Category  $category  the category instance
      */
     public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
@@ -72,8 +69,7 @@ class CategoryController extends Controller
     /**
      * Delete an existing category.
      *
-     * @param  Category  $category the category instance
-     * @return RedirectResponse
+     * @param  Category  $category  the category instance
      */
     public function destroy(Category $category): RedirectResponse
     {
@@ -85,9 +81,8 @@ class CategoryController extends Controller
     /**
      * Restore a trashed category.
      *
-     * @param  Request  $request the incoming request
-     * @param  string  $id the category unique id
-     * @return RedirectResponse
+     * @param  Request  $request  the incoming request
+     * @param  string  $id  the category unique id
      */
     public function restore(Request $request, string $id): RedirectResponse
     {
@@ -99,9 +94,8 @@ class CategoryController extends Controller
     /**
      * Permanently delete a trashed category.
      *
-     * @param  Request  $request the incoming request
-     * @param  string  $id the category unique id
-     * @return RedirectResponse
+     * @param  Request  $request  the incoming request
+     * @param  string  $id  the category unique id
      */
     public function forceDelete(Request $request, string $id): RedirectResponse
     {

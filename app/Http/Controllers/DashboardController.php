@@ -17,8 +17,8 @@ class DashboardController extends Controller
     protected $categoryService;
 
     /**
-     * @param  DashboardMetricsService  $service the dashboard metrics service instance
-     * @param  CategoryService  $categoryService the category service instance
+     * @param  DashboardMetricsService  $service  the dashboard metrics service instance
+     * @param  CategoryService  $categoryService  the category service instance
      * @return void
      */
     public function __construct(DashboardMetricsService $service, CategoryService $categoryService)
@@ -30,8 +30,7 @@ class DashboardController extends Controller
     /**
      * Display the dashboard.
      *
-     * @param  Request  $request the incoming request
-     * @return Response
+     * @param  Request  $request  the incoming request
      */
     public function index(Request $request): Response
     {

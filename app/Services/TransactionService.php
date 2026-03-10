@@ -19,8 +19,8 @@ class TransactionService
     protected $softDeletes;
 
     /**
-     * @param  DashboardMetricsService  $queryService the dashboard metrics service
-     * @param  SoftDeleteService  $softDeletes the soft delete service
+     * @param  DashboardMetricsService  $queryService  the dashboard metrics service
+     * @param  SoftDeleteService  $softDeletes  the soft delete service
      * @return void
      */
     public function __construct(DashboardMetricsService $queryService, SoftDeleteService $softDeletes)
@@ -32,9 +32,8 @@ class TransactionService
     /**
      * Get a paginated list of transactions for a user.
      *
-     * @param  User  $user the user instance
-     * @param  array  $filters the search filters
-     * @return LengthAwarePaginator
+     * @param  User  $user  the user instance
+     * @param  array  $filters  the search filters
      */
     public function listTransactions(User $user, array $filters): LengthAwarePaginator
     {
@@ -51,8 +50,7 @@ class TransactionService
     /**
      * Get categories for the transaction selection.
      *
-     * @param  User  $user the user instance
-     * @return Collection
+     * @param  User  $user  the user instance
      */
     public function getCategoriesForSelection(User $user): Collection
     {
@@ -66,8 +64,7 @@ class TransactionService
     /**
      * Create a new transaction with business logic applied.
      *
-     * @param  array  $data the transaction data
-     * @return Transaction
+     * @param  array  $data  the transaction data
      */
     public function createTransaction(array $data): Transaction
     {
@@ -92,9 +89,8 @@ class TransactionService
     /**
      * Update an existing transaction.
      *
-     * @param  Transaction  $transaction the transaction instance
-     * @param  array  $data the update data
-     * @return bool
+     * @param  Transaction  $transaction  the transaction instance
+     * @param  array  $data  the update data
      */
     public function updateTransaction(Transaction $transaction, array $data): bool
     {
@@ -125,8 +121,7 @@ class TransactionService
     /**
      * Delete a transaction.
      *
-     * @param  Transaction  $transaction the transaction instance
-     * @return bool|null
+     * @param  Transaction  $transaction  the transaction instance
      */
     public function deleteTransaction(Transaction $transaction): ?bool
     {
@@ -147,8 +142,7 @@ class TransactionService
     /**
      * Get trashed transactions for a user.
      *
-     * @param  User  $user the user instance
-     * @return Collection
+     * @param  User  $user  the user instance
      */
     public function listTrashedTransactions(User $user): Collection
     {
@@ -162,9 +156,8 @@ class TransactionService
     /**
      * Restore a trashed transaction.
      *
-     * @param  string  $id the unique id
-     * @param  User  $user the user instance
-     * @return bool
+     * @param  string  $id  the unique id
+     * @param  User  $user  the user instance
      */
     public function restoreTransaction(string $id, User $user): bool
     {
@@ -185,9 +178,8 @@ class TransactionService
     /**
      * Permanently delete a transaction.
      *
-     * @param  string  $id the unique id
-     * @param  User  $user the user instance
-     * @return bool
+     * @param  string  $id  the unique id
+     * @param  User  $user  the user instance
      */
     public function forceDeleteTransaction(string $id, User $user): bool
     {
@@ -197,8 +189,7 @@ class TransactionService
     /**
      * Recalculate the user's balance based on initial_balance and all transactions.
      *
-     * @param  User  $user the user instance
-     * @return void
+     * @param  User  $user  the user instance
      */
     public function recalculateBalance(User $user): void
     {

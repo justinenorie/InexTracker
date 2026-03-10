@@ -17,8 +17,8 @@ class CategoryService
     protected $transactionService;
 
     /**
-     * @param  SoftDeleteService  $softDeletes the soft delete service
-     * @param  TransactionService  $transactionService the transaction service
+     * @param  SoftDeleteService  $softDeletes  the soft delete service
+     * @param  TransactionService  $transactionService  the transaction service
      * @return void
      */
     public function __construct(SoftDeleteService $softDeletes, TransactionService $transactionService)
@@ -30,8 +30,7 @@ class CategoryService
     /**
      * Get all categories for a user.
      *
-     * @param  User  $user the user instance
-     * @return Collection
+     * @param  User  $user  the user instance
      */
     public function getCategoriesForUser(User $user): Collection
     {
@@ -45,8 +44,7 @@ class CategoryService
     /**
      * Create a new category.
      *
-     * @param  array  $data the category data
-     * @return Category
+     * @param  array  $data  the category data
      */
     public function createCategory(array $data): Category
     {
@@ -58,9 +56,8 @@ class CategoryService
     /**
      * Update an existing category.
      *
-     * @param  Category  $category the category instance
-     * @param  array  $data the update data
-     * @return bool
+     * @param  Category  $category  the category instance
+     * @param  array  $data  the update data
      */
     public function updateCategory(Category $category, array $data): bool
     {
@@ -70,8 +67,7 @@ class CategoryService
     /**
      * Delete a category.
      *
-     * @param  Category  $category the category instance
-     * @return bool|null
+     * @param  Category  $category  the category instance
      */
     public function deleteCategory(Category $category): ?bool
     {
@@ -90,8 +86,7 @@ class CategoryService
     /**
      * Get trashed categories for a user.
      *
-     * @param  User  $user the user instance
-     * @return Collection
+     * @param  User  $user  the user instance
      */
     public function getTrashedCategoriesForUser(User $user): Collection
     {
@@ -101,9 +96,8 @@ class CategoryService
     /**
      * Restore a trashed category.
      *
-     * @param  string  $id the unique id
-     * @param  User  $user the user instance
-     * @return bool
+     * @param  string  $id  the unique id
+     * @param  User  $user  the user instance
      */
     public function restoreCategory(string $id, User $user): bool
     {
@@ -121,9 +115,8 @@ class CategoryService
     /**
      * Permanently delete a category.
      *
-     * @param  string  $id the unique id
-     * @param  User  $user the user instance
-     * @return bool
+     * @param  string  $id  the unique id
+     * @param  User  $user  the user instance
      */
     public function forceDeleteCategory(string $id, User $user): bool
     {

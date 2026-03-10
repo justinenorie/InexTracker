@@ -26,7 +26,7 @@ class StoreCategoryRequest extends FormRequest
                 'max:120',
                 Rule::unique('categories', 'name')
                     ->where(
-                        fn($q) => $q
+                        fn ($q) => $q
                             ->where('user_id', $userId)
                             ->where('type', $this->input('type', 'both'))
                             ->whereNull('deleted_at')
