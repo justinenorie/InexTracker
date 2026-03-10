@@ -1,108 +1,151 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3'
+import { Form, Head, Link } from '@inertiajs/vue3'
 import InputError from '@/components/InputError.vue'
-import TextLink from '@/components/TextLink.vue'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Spinner } from '@/components/ui/spinner'
-import AuthBase from '@/layouts/AuthLayout.vue'
 import { login } from '@/routes'
 import { store } from '@/routes/register'
 </script>
 
 <template>
-  <AuthBase
-    title="Create an account"
-    description="Enter your details below to create your account"
+  <div
+    class="flex min-h-svh flex-col items-center justify-center bg-background p-6 md:p-10"
   >
     <Head title="Register" />
 
-    <Form
-      v-bind="store.form()"
-      :reset-on-success="['password', 'password_confirmation']"
-      v-slot="{ errors, processing }"
-      class="flex flex-col gap-6"
-    >
-      <div class="grid gap-6">
-        <div class="grid gap-2">
-          <Label for="name">Name</Label>
-          <Input
-            id="name"
-            type="text"
-            required
-            autofocus
-            :tabindex="1"
-            autocomplete="name"
-            name="name"
-            placeholder="Full name"
-          />
-          <InputError :message="errors.name" />
-        </div>
+    <div class="w-full max-w-sm md:max-w-4xl">
+      <Card class="overflow-hidden p-0">
+        <CardContent class="grid p-0 md:grid-cols-2">
+          <Form
+            v-bind="store.form()"
+            :reset-on-success="['password', 'password_confirmation']"
+            v-slot="{ errors, processing }"
+            class="p-6 md:p-8"
+          >
+            <FieldGroup>
+              <div class="flex flex-col items-center gap-2 text-center">
+                <h1 class="text-2xl font-bold">Create your account</h1>
+                <p class="text-sm text-balance text-muted-foreground">
+                  Enter your details below to create your account
+                </p>
+              </div>
 
-        <div class="grid gap-2">
-          <Label for="email">Email address</Label>
-          <Input
-            id="email"
-            type="email"
-            required
-            :tabindex="2"
-            autocomplete="email"
-            name="email"
-            placeholder="email@example.com"
-          />
-          <InputError :message="errors.email" />
-        </div>
+              <Field>
+                <FieldLabel for="name">Name</FieldLabel>
+                <Input
+                  id="name"
+                  type="text"
+                  name="name"
+                  required
+                  autofocus
+                  autocomplete="name"
+                  placeholder="Full name"
+                />
+                <InputError :message="errors.name" />
+              </Field>
 
-        <div class="grid gap-2">
-          <Label for="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            required
-            :tabindex="3"
-            autocomplete="new-password"
-            name="password"
-            placeholder="Password"
-          />
-          <InputError :message="errors.password" />
-        </div>
+              <Field>
+                <FieldLabel for="email">Email address</FieldLabel>
+                <Input
+                  id="email"
+                  type="email"
+                  name="email"
+                  required
+                  autocomplete="email"
+                  placeholder="email@example.com"
+                />
+                <InputError :message="errors.email" />
+              </Field>
 
-        <div class="grid gap-2">
-          <Label for="password_confirmation">Confirm password</Label>
-          <Input
-            id="password_confirmation"
-            type="password"
-            required
-            :tabindex="4"
-            autocomplete="new-password"
-            name="password_confirmation"
-            placeholder="Confirm password"
-          />
-          <InputError :message="errors.password_confirmation" />
-        </div>
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field>
+                  <FieldLabel for="password">Password</FieldLabel>
+                  <Input
+                    id="password"
+                    type="password"
+                    name="password"
+                    required
+                    autocomplete="new-password"
+                    placeholder="Password"
+                  />
+                  <InputError :message="errors.password" />
+                </Field>
 
-        <Button
-          type="submit"
-          class="mt-2 w-full"
-          tabindex="5"
-          :disabled="processing"
-          data-test="register-user-button"
+                <Field>
+                  <FieldLabel for="password_confirmation"
+                    >Confirm password</FieldLabel
+                  >
+                  <Input
+                    id="password_confirmation"
+                    type="password"
+                    name="password_confirmation"
+                    required
+                    autocomplete="new-password"
+                    placeholder="Confirm password"
+                  />
+                  <InputError :message="errors.password_confirmation" />
+                </Field>
+              </div>
+
+              <Field>
+                <FieldLabel for="initial_balance"
+                  >Initial Balance (Optional)</FieldLabel
+                >
+                <Input
+                  id="initial_balance"
+                  type="number"
+                  name="initial_balance"
+                  placeholder="0.00"
+                  step="0.01"
+                />
+                <FieldDescription
+                  >Set your starting wallet balance.</FieldDescription
+                >
+                <InputError :message="errors.initial_balance" />
+              </Field>
+
+              <Field>
+                <Button type="submit" class="w-full" :disabled="processing">
+                  <Spinner v-if="processing" />
+                  Create account
+                </Button>
+              </Field>
+
+              <div class="text-center text-sm text-muted-foreground">
+                Already have an account?
+                <Link :href="login()" class="underline underline-offset-4"
+                  >Log in</Link
+                >
+              </div>
+            </FieldGroup>
+          </Form>
+          <div class="relative hidden bg-muted md:block">
+            <img
+              src="/inextracker_bg.png"
+              alt="Background"
+              class="absolute inset-0 h-full w-full object-cover dark:brightness-[0.4]"
+            />
+          </div>
+        </CardContent>
+      </Card>
+      <p class="mt-4 px-6 text-center text-xs text-muted-foreground">
+        By clicking continue, you agree to our
+        <a href="#" class="underline underline-offset-4 hover:text-primary"
+          >Terms of Service</a
         >
-          <Spinner v-if="processing" />
-          Create account
-        </Button>
-      </div>
-
-      <div class="text-center text-sm text-muted-foreground">
-        Already have an account?
-        <TextLink
-          :href="login()"
-          class="underline underline-offset-4"
-          :tabindex="6"
-          >Log in</TextLink
-        >
-      </div>
-    </Form>
-  </AuthBase>
+        and
+        <a href="#" class="underline underline-offset-4 hover:text-primary"
+          >Privacy Policy</a
+        >.
+      </p>
+    </div>
+  </div>
 </template>
