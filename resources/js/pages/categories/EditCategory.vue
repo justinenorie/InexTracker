@@ -2,6 +2,7 @@
 import { Form } from '@inertiajs/vue3'
 import { ref, watch } from 'vue'
 import CategoryController from '@/actions/App/Http/Controllers/CategoryController'
+import ColorPicker from '@/components/ColorPicker.vue'
 import InputError from '@/components/InputError.vue'
 import { Button } from '@/components/ui/button'
 import {
@@ -120,7 +121,7 @@ const onSuccess = () => {
 
         <div class="grid gap-2">
           <Label htmlFor="color">Color (optional)</Label>
-          <Input
+          <ColorPicker
             id="color"
             v-model="colorValue"
             name="color"
