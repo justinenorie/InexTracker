@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3'
+import { Eye, EyeOff } from 'lucide-vue-next'
+import { ref } from 'vue'
 import InputError from '@/components/InputError.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -15,6 +17,8 @@ defineProps<{
   canResetPassword: boolean
   canRegister: boolean
 }>()
+
+const showPassword = ref(false)
 </script>
 
 <template>
@@ -72,13 +76,27 @@ defineProps<{
                     Forgot your password?
                   </Link>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  name="password"
-                  required
-                  autocomplete="current-password"
-                />
+                <div class="relative">
+                  <Input
+                    id="password"
+                    :type="showPassword ? 'text' : 'password'"
+                    name="password"
+                    required
+                    autocomplete="current-password"
+                    placeholder="Enter your Password"
+                    class="pr-10"
+                  />
+                  <button
+                    type="button"
+                    class="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    @click="showPassword = !showPassword"
+                  >
+                    <component
+                      :is="showPassword ? EyeOff : Eye"
+                      class="h-4 w-4"
+                    />
+                  </button>
+                </div>
                 <InputError :message="errors.password" />
               </Field>
 

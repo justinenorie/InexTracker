@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3'
+import { Eye, EyeOff } from 'lucide-vue-next'
+import { ref } from 'vue'
 import InputError from '@/components/InputError.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -13,6 +15,9 @@ import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { login } from '@/routes'
 import { store } from '@/routes/register'
+
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
 </script>
 
 <template>
@@ -68,29 +73,47 @@ import { store } from '@/routes/register'
               <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Field>
                   <FieldLabel for="password">Password</FieldLabel>
-                  <Input
-                    id="password"
-                    type="password"
-                    name="password"
-                    required
-                    autocomplete="new-password"
-                    placeholder="Password"
-                  />
+                  <div class="relative">
+                    <Input
+                      id="password"
+                      :type="showPassword ? 'text' : 'password'"
+                      name="password"
+                      required
+                      autocomplete="new-password"
+                      placeholder="Password"
+                      class="pr-10"
+                    />
+                    <button
+                      type="button"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      @click="showPassword = !showPassword"
+                    >
+                      <component :is="showPassword ? EyeOff : Eye" class="h-4 w-4" />
+                    </button>
+                  </div>
                   <InputError :message="errors.password" />
                 </Field>
 
                 <Field>
-                  <FieldLabel for="password_confirmation"
-                    >Confirm password</FieldLabel
-                  >
-                  <Input
-                    id="password_confirmation"
-                    type="password"
-                    name="password_confirmation"
-                    required
-                    autocomplete="new-password"
-                    placeholder="Confirm password"
-                  />
+                  <FieldLabel for="password_confirmation">Confirm password</FieldLabel>
+                  <div class="relative">
+                    <Input
+                      id="password_confirmation"
+                      :type="showConfirmPassword ? 'text' : 'password'"
+                      name="password_confirmation"
+                      required
+                      autocomplete="new-password"
+                      placeholder="Confirm password"
+                      class="pr-10"
+                    />
+                    <button
+                      type="button"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      @click="showConfirmPassword = !showConfirmPassword"
+                    >
+                      <component :is="showConfirmPassword ? EyeOff : Eye" class="h-4 w-4" />
+                    </button>
+                  </div>
                   <InputError :message="errors.password_confirmation" />
                 </Field>
               </div>
