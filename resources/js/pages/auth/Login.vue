@@ -2,6 +2,7 @@
 import { Form, Head, Link } from '@inertiajs/vue3'
 import { Eye, EyeOff } from 'lucide-vue-next'
 import { ref } from 'vue'
+import AppLogoIcon from '@/components/AppLogoIcon.vue'
 import InputError from '@/components/InputError.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -27,53 +28,62 @@ const showPassword = ref(false)
   >
     <Head title="Log in" />
 
-    <div class="w-full max-w-sm md:max-w-3xl">
-      <Card class="overflow-hidden p-0">
+    <div class="w-full max-w-sm md:max-w-3xl lg:max-w-4xl">
+      <Card class="overflow-hidden p-0 shadow-xl sm:rounded-xl">
         <CardContent class="grid p-0 md:grid-cols-2">
           <Form
             v-bind="store()"
             :reset-on-success="['password']"
             v-slot="{ errors, processing }"
-            class="p-6 md:p-8"
+            class="p-6 sm:p-10 md:p-12 lg:p-16"
           >
             <FieldGroup>
               <div class="flex flex-col items-center gap-2 text-center">
-                <h1 class="text-2xl font-bold">Welcome back</h1>
-                <p class="text-sm text-balance text-muted-foreground">
-                  Login to your Expense Tracker account
+                <h1 class="text-3xl font-extrabold tracking-tight">
+                  Welcome back
+                </h1>
+                <p
+                  class="text-sm text-balance text-muted-foreground sm:text-base"
+                >
+                  Enter your credentials to access your dashboard
                 </p>
               </div>
 
               <div
                 v-if="status"
-                class="mb-4 text-center text-sm font-medium text-green-600"
+                class="rounded-lg bg-success/10 p-3 text-center text-sm font-medium text-success"
               >
                 {{ status }}
               </div>
 
-              <Field>
-                <FieldLabel for="email"> Email </FieldLabel>
+              <Field class="mt-4">
+                <FieldLabel for="email" class="font-semibold"
+                  >Email Address</FieldLabel
+                >
                 <Input
                   id="email"
                   type="email"
                   name="email"
-                  placeholder="m@example.com"
+                  placeholder="name@example.com"
                   required
                   autofocus
                   autocomplete="email"
+                  class="h-11"
                 />
                 <InputError :message="errors.email" />
               </Field>
 
               <Field>
                 <div class="flex items-center">
-                  <FieldLabel for="password"> Password </FieldLabel>
+                  <FieldLabel for="password" class="font-semibold"
+                    >Password</FieldLabel
+                  >
                   <Link
                     v-if="canResetPassword"
                     :href="request()"
-                    class="ml-auto text-sm underline-offset-2 hover:underline"
+                    class="ml-auto text-sm font-medium text-primary underline-offset-4 hover:underline"
                   >
-                    Forgot your password?
+                    Forgot password?
                   </Link>
                 </div>
                 <div class="relative">
@@ -83,12 +93,12 @@ const showPassword = ref(false)
                     name="password"
                     required
                     autocomplete="current-password"
-                    placeholder="Enter your Password"
-                    class="pr-10"
+                    placeholder="••••••••"
+                    class="h-11 pr-10"
                   />
                   <button
                     type="button"
-                    class="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    class="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
                     @click="showPassword = !showPassword"
                   >
                     <component
@@ -100,30 +110,55 @@ const showPassword = ref(false)
                 <InputError :message="errors.password" />
               </Field>
 
-              <Field>
-                <Button type="submit" class="w-full" :disabled="processing">
+              <Field class="pt-2">
+                <Button
+                  type="submit"
+                  class="h-11 w-full text-base font-bold shadow-lg shadow-primary/20"
+                  :disabled="processing"
+                >
                   <Spinner v-if="processing" />
-                  Login
+                  Sign In
                 </Button>
               </Field>
 
               <div
-                class="text-center text-sm text-muted-foreground"
+                class="mt-4 text-center text-sm text-muted-foreground"
                 v-if="canRegister"
               >
-                Don't have an account?
-                <Link :href="register()" class="underline underline-offset-4"
-                  >Sign up</Link
+                New here?
+                <Link
+                  :href="register()"
+                  class="font-semibold text-primary underline-offset-4 hover:underline"
+                  >Create an account</Link
                 >
               </div>
             </FieldGroup>
           </Form>
           <div class="relative hidden bg-muted md:block">
+            <div
+              class="absolute inset-0 z-10 bg-primary/20 backdrop-blur-[2px]"
+            ></div>
             <img
               src="/inextracker_bg.png"
               alt="Background"
-              class="absolute inset-0 h-full w-full object-cover dark:brightness-[0.4]"
+              class="absolute inset-0 h-full w-full object-cover grayscale-[0.2]"
             />
+            <div
+              class="relative z-20 flex h-full flex-col justify-between p-12 text-white"
+            >
+              <div class="flex items-center gap-2">
+                <AppLogoIcon class="size-8 fill-current" />
+                <span class="text-xl font-bold tracking-tight"
+                  >InexTracker</span
+                >
+              </div>
+              <div class="space-y-4">
+                <p class="text-2xl leading-tight font-medium italic">
+                  "Control your money, control your life. Tracking every penny
+                  is the first step to financial freedom."
+                </p>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
