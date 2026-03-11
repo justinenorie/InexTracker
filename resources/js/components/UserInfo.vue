@@ -1,19 +1,23 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useCurrency } from '@/composables/useCurrency'
 import { useInitials } from '@/composables/useInitials'
 import type { User } from '@/types'
 
 type Props = {
   user: User
   showEmail?: boolean
+  showBalance?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   showEmail: false,
+  showBalance: false,
 })
 
 const { getInitials } = useInitials()
+const { formatMoney } = useCurrency()
 
 // Compute whether we should show the avatar image
 const showAvatar = computed(() => props.user.avatar && props.user.avatar !== '')
@@ -32,5 +36,12 @@ const showAvatar = computed(() => props.user.avatar && props.user.avatar !== '')
     <span v-if="showEmail" class="truncate text-xs text-muted-foreground">{{
       user.email
     }}</span>
+    <span
+      v-if="showBalance"
+      class="truncate text-xs font-bold text-primary"
+      data-test="user-balance"
+    >
+      {{ formatMoney(user.balance) }}
+    </span>
   </div>
 </template>
